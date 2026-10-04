@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { AlertTriangle, Download, Trash2 } from 'lucide-react'
 import { usePlannerStore } from './store/usePlannerStore'
 import { calcularEstadoEfectivo } from './core/algorithm/estado'
-import type { EstadoEfectivo } from './core/pensum/types'
+import type { EstadoEfectivo, FilaResumenSIA, HistorialItem } from './core/pensum/types'
 import { PensumSelector } from './ui/PensumSelector'
 import { HistoryImport } from './ui/HistoryImport'
 import { HistoryEditor } from './ui/HistoryEditor'
@@ -28,6 +28,7 @@ export function App() {
     cargarPensum,
     setPerfil,
     setHistorial,
+    setResumenSia,
     setFiltros,
     recalcular,
     exportar,
@@ -42,11 +43,18 @@ export function App() {
     cargarPensum()
   }, [cargarPensum])
 
-  const handleImportar = useCallback((items: any[]) => {
+  const handleImportar = useCallback((items: HistorialItem[], resumen: FilaResumenSIA[]) => {
+    // Re-importar borra y recarga: historial y resumen del SIA se reemplazan.
     setHistorial(items)
+    setResumenSia(resumen)
     recalcular()
-    setConflicto({ mensaje: `${items.length} asignaturas importadas correctamente.`, tipo: 'warning' })
-  }, [setHistorial, recalcular])
+    setConflicto({
+      mensaje: resumen.length > 0
+        ? `${items.length} asignaturas y resumen de créditos importados correctamente.`
+        : `${items.length} asignaturas importadas correctamente.`,
+      tipo: 'warning',
+    })
+  }, [setHistorial, setResumenSia, recalcular])
 
   const handleSimular = useCallback((codigo: string) => {
     // Simular pérdida: temporalmente marcar como perdida y recalcular

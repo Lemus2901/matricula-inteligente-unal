@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { AlertCircle, FileText, X } from 'lucide-react'
 import { parsearHistorialSIA } from '../core/pensum/parser-sia'
-import type { HistorialItem, ParseResult, ParseError } from '../core/pensum/types'
+import type { FilaResumenSIA, HistorialItem, ParseResult, ParseError } from '../core/pensum/types'
 
 interface HistoryImportProps {
-  onImport: (items: HistorialItem[]) => void
+  onImport: (items: HistorialItem[], resumen: FilaResumenSIA[]) => void
 }
 
 export function HistoryImport({ onImport }: HistoryImportProps) {
@@ -20,7 +20,7 @@ export function HistoryImport({ onImport }: HistoryImportProps) {
 
   const handleConfirm = () => {
     if (preview && preview.items.length > 0) {
-      onImport(preview.items)
+      onImport(preview.items, preview.resumen_creditos)
       setPreviewVisible(false)
     }
   }
@@ -96,6 +96,38 @@ export function HistoryImport({ onImport }: HistoryImportProps) {
                   <li key={idx}>{w}</li>
                 ))}
               </ul>
+            </div>
+          )}
+
+          {preview.resumen_creditos.length > 0 && (
+            <div className="bg-blue-50 border-b border-blue-200 p-3">
+              <p className="text-sm text-blue-800 font-medium mb-1">
+                Resumen de créditos detectado: {preview.resumen_creditos.length} fila(s)
+              </p>
+              <table className="w-full text-xs text-blue-900">
+                <thead>
+                  <tr className="text-left">
+                    <th className="pr-2 font-medium">Tipología</th>
+                    <th className="pr-2 font-medium text-right">Exig.</th>
+                    <th className="pr-2 font-medium text-right">Apr.</th>
+                    <th className="pr-2 font-medium text-right">Pend.</th>
+                    <th className="pr-2 font-medium text-right">Insc.</th>
+                    <th className="font-medium text-right">Curs.</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {preview.resumen_creditos.map((f: FilaResumenSIA, idx: number) => (
+                    <tr key={idx} className="border-t border-blue-100">
+                      <td className="pr-2">{f.tipologia}</td>
+                      <td className="pr-2 text-right tabular-nums">{f.exigidos}</td>
+                      <td className="pr-2 text-right tabular-nums">{f.aprobados}</td>
+                      <td className="pr-2 text-right tabular-nums">{f.pendientes}</td>
+                      <td className="pr-2 text-right tabular-nums">{f.inscritos}</td>
+                      <td className="text-right tabular-nums">{f.cursados}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
 

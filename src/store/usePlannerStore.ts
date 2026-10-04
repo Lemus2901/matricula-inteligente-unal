@@ -6,6 +6,7 @@ import type {
   PerfilEstudiante,
   HistorialItem,
   FiltroMateria,
+  FilaResumenSIA,
   RutaCompleta,
   Pensum,
   ParseResult,
@@ -19,6 +20,7 @@ interface PensumState {
   pensumError: string | null
   perfil: PerfilEstudiante
   historial: HistorialItem[]
+  resumenSia: FilaResumenSIA[]
   filtros: FiltroMateria[]
   ruta: RutaCompleta | null
   recalculando: boolean
@@ -30,6 +32,7 @@ interface PensumState {
   setPensumError: (error: string | null) => void
   setPerfil: (parcial: Partial<PerfilEstudiante>) => void
   setHistorial: (historial: HistorialItem[]) => void
+  setResumenSia: (resumen: FilaResumenSIA[]) => void
   setFiltros: (filtros: FiltroMateria[]) => void
   agregarFiltro: (filtro: FiltroMateria) => void
   removerFiltro: (codigo: string, tipo: 'evitar' | 'si_o_si') => void
@@ -55,6 +58,7 @@ export const usePlannerStore = create<PensumState>()(
     pensumError: null,
     perfil: perfilInicial(DEFAULT_PLAN),
     historial: [],
+    resumenSia: [],
     filtros: [],
     ruta: null,
     recalculando: false,
@@ -66,6 +70,7 @@ export const usePlannerStore = create<PensumState>()(
     setPensumError: (error) => set({ pensumError: error, pensumLoading: false }),
     setPerfil: (parcial) => set((state) => { state.perfil = { ...state.perfil, ...parcial } }),
     setHistorial: (historial) => set({ historial }),
+    setResumenSia: (resumen) => set({ resumenSia: resumen }),
     setFiltros: (filtros) => set({ filtros }),
     agregarFiltro: (filtro) =>
       set((state) => {
@@ -98,6 +103,7 @@ export const usePlannerStore = create<PensumState>()(
           set({
             perfil: guardado.perfil,
             historial: guardado.historial,
+            resumenSia: guardado.resumen_sia ?? [],
             filtros: guardado.filtros,
           })
         }
@@ -110,7 +116,11 @@ export const usePlannerStore = create<PensumState>()(
     importarHistorial: (texto) => {
       const resultado = parsearHistorialSIA(texto)
       if (resultado.items.length > 0) {
-        set({ historial: resultado.items })
+        // Re-importar borra y recarga: historial y resumen se reemplazan.
+        set({
+          historial: resultado.items,
+          resumenSia: resultado.resumen_creditos,
+        })
         get().recalcular()
       }
       return resultado
@@ -131,13 +141,14 @@ export const usePlannerStore = create<PensumState>()(
     },
 
     exportar: () => {
-      const { pensum, perfil, historial, filtros } = get()
+      const { pensum, perfil, historial, resumenSia, filtros } = get()
       if (!pensum) return ''
       return exportarJSON({
         schema_version: 1,
         pensum_id: pensum.pensum_id,
         perfil,
         historial,
+        resumen_sia: resumenSia,
         filtros,
       })
     },
@@ -147,6 +158,7 @@ export const usePlannerStore = create<PensumState>()(
       set({
         perfil: perfilInicial('sistemas-minas-2024'),
         historial: [],
+        resumenSia: [],
         filtros: [],
         ruta: null,
         error: null,
@@ -154,12 +166,14 @@ export const usePlannerStore = create<PensumState>()(
     },
   })))
 
-// Persistencia: guarda perfil, historial y filtros en localStorage en cada cambio.
+// Persistencia: guarda perfil, historial, resumen SIA y filtros en
+// localStorage en cada cambio.
 usePlannerStore.subscribe((state, prev) => {
   if (!state.pensum) return
   if (
     state.perfil === prev.perfil &&
     state.historial === prev.historial &&
+    state.resumenSia === prev.resumenSia &&
     state.filtros === prev.filtros
   ) {
     return
@@ -169,6 +183,7 @@ usePlannerStore.subscribe((state, prev) => {
     pensum_id: state.pensum.pensum_id,
     perfil: state.perfil,
     historial: state.historial,
+    resumen_sia: state.resumenSia,
     filtros: state.filtros,
   })
 })

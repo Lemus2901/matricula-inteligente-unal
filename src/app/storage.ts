@@ -1,5 +1,6 @@
 import type {
   FiltroMateria,
+  FilaResumenSIA,
   HistorialAcademico,
   PerfilEstudiante,
 } from '../core/pensum/types'
@@ -12,6 +13,9 @@ export interface EstadoPersistido {
   pensum_id: string
   perfil: PerfilEstudiante
   historial: HistorialAcademico
+  /** Opcional: bloque "Resumen de créditos" importado del SIA (schema v1
+   *  compatible hacia atrás: los estados guardados sin él siguen valiendo). */
+  resumen_sia?: FilaResumenSIA[]
   filtros: FiltroMateria[]
 }
 
