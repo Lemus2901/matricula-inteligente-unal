@@ -104,6 +104,12 @@ export function HistoryEditor({ pensum, historial, onChange }: HistoryEditorProp
           </details>
         ))}
       </div>
+
+      <p className="text-xs text-gray-500">
+        Haz clic en una materia para cambiar su estado: Pendiente → Aprobada →
+        Perdida → En curso. Las materias <strong>en curso</strong> no se
+        recomiendan de nuevo y suman como inscritas en su tipología.
+      </p>
     </div>
   )
 }

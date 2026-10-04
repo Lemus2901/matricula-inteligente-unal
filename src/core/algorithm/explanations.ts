@@ -1,5 +1,7 @@
 import type { PensumGraph } from '../pensum/graph'
 import type {
+  AvanceComponente,
+  ComponenteId,
   MapaEstadoEfectivo,
   MateriaPlanificada,
   RazonCodigo,
@@ -10,6 +12,8 @@ export interface ContextoRazon {
   estado: MapaEstadoEfectivo
   siSiEsteSemestre: Set<string>
   longitudesCadena: Map<string, number>
+  avance?: Map<ComponenteId, AvanceComponente>
+  planificados?: Map<ComponenteId, number>
 }
 
 /** Determina la razón principal por la que una materia se incluye. */
@@ -32,6 +36,32 @@ export function calcularRazon(
     return {
       razon: 'filtro_si_o_si',
       razon_texto: `La marcaste como "sí o sí" para este semestre.`,
+    }
+  }
+
+  // Cursos no obligatorios de un cupo pendiente: explican el cupo que
+  // contribuyen a cubrir (RF-22 / RN-10).
+  if (!asignatura.obligatoria && ctx.avance) {
+    const av = ctx.avance.get(asignatura.agrupacion)
+    const planificados = ctx.planificados?.get(asignatura.agrupacion) ?? 0
+    if (av && av.componente !== 'libre_eleccion') {
+      const faltan = Math.max(
+        0,
+        av.creditos_exigidos -
+          av.creditos_aprobados -
+          av.creditos_inscritos -
+          planificados,
+      )
+      if (faltan > 0) {
+        const razon: RazonCodigo =
+          asignatura.agrupacion === 'optativas_tecnologicas'
+            ? 'optativa_tecnologica'
+            : 'prerrequisito_cumplido'
+        return {
+          razon,
+          razon_texto: `Cuenta para ${av.nombre} — te faltan ${faltan} cr (incluye inscritos).`,
+        }
+      }
     }
   }
 

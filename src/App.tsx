@@ -8,6 +8,7 @@ import { HistoryImport } from './ui/HistoryImport'
 import { HistoryEditor } from './ui/HistoryEditor'
 import { FilterPanel } from './ui/FilterPanel'
 import { NextCoursesList } from './ui/NextCoursesList'
+import { ProgressPanel } from './ui/ProgressPanel'
 import { SemesterPlanView } from './ui/SemesterPlanView'
 import { BottleneckAlert } from './ui/BottleneckAlert'
 import { ConflictToast } from './ui/ConflictToast'
@@ -259,6 +260,8 @@ export function App() {
                   onSimularPerdida={handleSimular}
                   onToggleFiltro={handleToggleFiltro}
                 />
+
+                <ProgressPanel avance={ruta?.avance ?? []} />
 
                 <BottleneckAlert cuellos={ruta?.cuellos_botella ?? []} />
 

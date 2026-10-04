@@ -40,6 +40,22 @@ export interface ComponenteInfo {
   creditos_obligatorios: number
 }
 
+/** Avance del estudiante por componente (tipología) del pensum. */
+export interface AvanceComponente {
+  componente: ComponenteId
+  nombre: string
+  creditos_exigidos: number
+  creditos_obligatorios: number
+  /** Créditos aprobados dentro del componente (incluye códigos fuera del
+   *  pensum y excedentes de otros componentes cuando es libre elección). */
+  creditos_aprobados: number
+  /** Créditos de materias "en curso" (inscritos) dentro del componente. */
+  creditos_inscritos: number
+  /** Créditos aprobados por encima del exigido (van a libre elección). */
+  excedente: number
+  cumple: boolean
+}
+
 export interface Pensum {
   pensum_id: string
   programa: string
@@ -129,6 +145,8 @@ export type Advertencia =
   | { tipo: 'en_curso_antiguo'; codigos: string[] }
   | { tipo: 'cupo_proyectado_v02'; mensaje: string }
   | { tipo: 'papa_proyectado_v02'; mensaje: string }
+  | { tipo: 'cupos_incompletos'; detalles: string[] }
+  | { tipo: 'libre_eleccion_pendiente'; mensaje: string }
 
 export interface RutaCompleta {
   semestres: SemestrePlan[]
@@ -136,6 +154,8 @@ export interface RutaCompleta {
   proximas_materias: MateriaPlanificada[]
   cuellos_botella: CuelloBotella[]
   advertencias: Advertencia[]
+  /** Avance actual del estudiante por componente (tipología). */
+  avance: AvanceComponente[]
   llega_a_objetivo?: boolean
   bloqueo?: BloqueoInfo | null
 }

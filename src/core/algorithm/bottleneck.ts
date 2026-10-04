@@ -34,19 +34,24 @@ export function calcularLongitudesCadena(graph: PensumGraph): Map<string, number
 }
 
 /**
- * Devuelve las materias no aprobadas con la cadena de dependencias más larga.
+ * Devuelve las materias no aprobadas con la cadena de dependencias más
+ * larga. Si se pasa `necesarias`, solo se consideran materias necesarias
+ * para graduarse (obligatorias u optativas de cupo pendiente, y sus
+ * prerrequisitos) — RN: una optativa de un cupo ya cumplido no es cuello.
  */
 export function detectarCuellosBotella(
   graph: PensumGraph,
   estado: MapaEstadoEfectivo,
   niveles: Map<string, number>,
   limite = 5,
+  necesarias?: Set<string>,
 ): CuelloBotella[] {
   const longitudes = calcularLongitudesCadena(graph)
 
   const cuellos: CuelloBotella[] = []
   for (const a of graph.asignaturas.values()) {
     if ((estado.get(a.codigo) ?? 'no_vista') === 'aprobada') continue
+    if (necesarias && !necesarias.has(a.codigo)) continue
     const cadena = longitudes.get(a.codigo) ?? 1
     cuellos.push({
       codigo: a.codigo,

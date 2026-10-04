@@ -27,6 +27,7 @@ self.onmessage = (evento: MessageEvent<Peticion>) => {
         proximas_materias: [],
         cuellos_botella: [],
         advertencias: [],
+        avance: [],
         bloqueo: { codigos: [], razon_texto: `Error al calcular: ${String(e)}` },
       },
       error: String(e),
