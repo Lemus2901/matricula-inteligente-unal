@@ -192,10 +192,26 @@ export interface ParseError {
   mensaje: string
 }
 
+/** Fila del bloque "Resumen de créditos" que el SIA incluye al final de la
+ *  historia académica (cifras propias de cada estudiante). */
+export interface FilaResumenSIA {
+  /** Nombre de la tipología tal cual el SIA ("DISCIPLINAR OPTATIVA",
+   *  "TOTAL", "TOTAL ESTUDIANTE", ...). */
+  tipologia: string
+  exigidos: number
+  aprobados: number
+  pendientes: number
+  inscritos: number
+  /** Créditos ya vistos (no necesariamente aprobados). */
+  cursados: number
+}
+
 export interface ParseResult {
   items: HistorialItem[]
   errores: ParseError[]
   warnings: string[]
+  /** Bloque "Resumen de créditos"; vacío si el texto no lo incluye. */
+  resumen_creditos: FilaResumenSIA[]
 }
 
 // ═══════════════ ESTADO EFECTIVO ═══════════════

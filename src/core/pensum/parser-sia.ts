@@ -1,5 +1,6 @@
 import type {
   ComponenteId,
+  FilaResumenSIA,
   HistorialItem,
   ParseError,
   ParseResult,
@@ -52,9 +53,15 @@ export function parsearHistorialSIA(texto: string): ParseResult {
   const vistos = new Set<string>()
 
   let i = 0
+  let resumen: FilaResumenSIA[] = []
   while (i < lineas.length) {
     const linea = lineas[i]
     const match = linea.match(COURSE_RE)
+
+    // Bloque "Resumen de créditos" (solo la primera aparición).
+    if (resumen.length === 0 && esTituloResumen(linea)) {
+      resumen = extraerResumenCreditos(lineas, i)
+    }
 
     if (match) {
       const [, nombreRaw, codigo, resto] = match
@@ -111,5 +118,60 @@ export function parsearHistorialSIA(texto: string): ParseResult {
     i++
   }
 
-  return { items, errores, warnings }
+  return { items, errores, warnings, resumen_creditos: resumen }
+}
+
+// ────────────── Resumen de créditos (tipologías del SIA) ──────────────
+
+function normalizarTexto(s: string): string {
+  return s
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim()
+}
+
+function esTituloResumen(linea: string): boolean {
+  return normalizarTexto(linea) === 'resumen de creditos'
+}
+
+/**
+ * Extrae las filas del bloque "Resumen de créditos" que sigue al listado de
+ * asignaturas. Tolera dos variantes de copia del SIA:
+ *  - encabezado celda-por-línea (con líneas de solo tabs intercaladas), y
+ *  - encabezado en una sola línea separado por tabs.
+ * Las filas de datos son `TIPOLOGÍA<TAB>exigidos<TAB>aprobados<TAB>pendientes<TAB>inscritos<TAB>cursados`.
+ * Las líneas de excedentes, cancelados, porcentaje de avance y cupo quedan
+ * fuera (no casan con el patrón y no se solicitaron).
+ */
+function extraerResumenCreditos(lineas: string[], desde: number): FilaResumenSIA[] {
+  const filas: FilaResumenSIA[] = []
+  const limite = Math.min(lineas.length, desde + 61)
+
+  for (let i = desde + 1; i < limite; i++) {
+    if (esTituloResumen(lineas[i])) break
+
+    // O tolerancia: tabs (formato real) o dos o más espacios.
+    let celdas = lineas[i].split('\t').map((c) => c.trim())
+    if (celdas.length < 6) {
+      celdas = lineas[i].split(/\s{2,}/).map((c) => c.trim())
+    }
+    celdas = celdas.filter((c) => c.length > 0)
+    if (celdas.length < 6) continue
+
+    const [tipologia, ...resto] = celdas
+    const numeros = resto.slice(0, 5).map((c) => c.replace(/\./g, ''))
+    if (!/^\d+$/.test(tipologia) && numeros.every((n) => /^\d+$/.test(n))) {
+      filas.push({
+        tipologia,
+        exigidos: Number(numeros[0]),
+        aprobados: Number(numeros[1]),
+        pendientes: Number(numeros[2]),
+        inscritos: Number(numeros[3]),
+        cursados: Number(numeros[4]),
+      })
+    }
+  }
+
+  return filas
 }
