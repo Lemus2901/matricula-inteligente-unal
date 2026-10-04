@@ -107,6 +107,7 @@ export function parsearHistorialSIA(texto: string): ParseResult {
             estado,
             periodo: periodo || undefined,
             creditos_inscritos: Number.isFinite(creditos) ? creditos : undefined,
+            nombre_sia: nombre,
           })
         }
       }

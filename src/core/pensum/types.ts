@@ -90,6 +90,9 @@ export interface HistorialItem {
   nota?: number
   creditos_inscritos?: number
   cancelada_antes_segunda_semana?: boolean
+  /** Nombre tal como viene en el texto copiado del SIA (solo presentación;
+   *  opcional: los items guardados sin él siguen siendo válidos). */
+  nombre_sia?: string
 }
 
 export type HistorialAcademico = HistorialItem[]

@@ -145,7 +145,9 @@ export function HistoryImport({ onImport }: HistoryImportProps) {
                 {preview.items.map((item, idx) => (
                   <tr key={idx} className="border-t border-gray-100 hover:bg-gray-50">
                     <td className="p-2 font-mono text-gray-700">{item.codigo}</td>
-                    <td className="p-2 text-gray-700">{item.codigo} — (nombre del pensum)</td>
+                    <td className="p-2 text-gray-700">
+                      {item.nombre_sia ?? '(sin nombre en el texto)'}
+                    </td>
                     <td className="p-2 text-center">
                       <span
                         className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${

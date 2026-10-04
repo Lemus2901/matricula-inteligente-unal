@@ -453,7 +453,7 @@ Estudiante
 | `HistoryEditor` | UI | Editar el historial manualmente. | RF-03 |
 | `FilterPanel` | UI | Créditos mín/máx, prioridad, semestre objetivo, filtros por materia. | RF-04, RF-10, RF-11, RF-12, RF-13 |
 | `NextCoursesList` | UI | Vista principal: chips de próximas materias con razón. | RF-09 |
-| `ProgressPanel` | UI | Arriba: tabla del "Resumen de créditos" importada del SIA; abajo: avance calculado por componente (tipología) con aprobados, inscritos y excedentes. | RF-18 (parcial), RF-22 |
+| `ProgressPanel` | UI | Arriba: tabla del "Resumen de créditos" importada del SIA; abajo: avance calculado agrupado bajo las tipologías SIA (`GRUPOS_SIA`) con sub-filas del pensum, aprobados, inscritos y excedentes. | RF-18 (parcial), RF-22 |
 | `SemesterPlanView` | UI | Ruta por semestre y exportación. | RF-16 |
 | `BottleneckAlert` | UI | Top de cuellos de botella y costo de evitarlos. | RF-08 |
 | `ConflictToast` | UI | Explicar conflictos sin bloquear. | RNF-04 |
@@ -538,6 +538,7 @@ interface HistorialItem {
   nota?: number;                        // v0.2
   creditos_inscritos?: number;          // usado en v0.1 por los cupos (códigos fuera del pensum)
   cancelada_antes_segunda_semana?: boolean; // v0.2
+  nombre_sia?: string;                  // nombre tal como viene en el texto del SIA (solo presentación; opcional)
 }
 
 type HistorialAcademico = HistorialItem[];
@@ -1034,13 +1035,14 @@ interface ParseResult {
 }
 interface ParseError { linea: string; mensaje: string; }
 // FilaResumenSIA (§13.1): { tipologia, exigidos, aprobados, pendientes, inscritos, cursados }
+// Cada item incluye `nombre_sia` (el nombre tal como viene en el texto pegado).
 ```
 
 ### 17.4 Flujo de interfaz
 
 1. **Textarea** para pegar (Ctrl+V).
 2. Botón "Vista previa".
-3. **Tabla editable** con lo detectado: código, nombre, estado, periodo, nota.
+3. **Tabla editable** con lo detectado: código, nombre real del texto del SIA (`nombre_sia`, con respaldo "(sin nombre en el texto)"), estado, periodo, nota.
 4. Si el texto traía el bloque de resumen, la vista previa muestra una sección "Resumen de créditos detectado: N fila(s)" con su tabla.
 5. Líneas no reconocidas se listan por separado.
 6. Botón "Confirmar e importar" → guarda historial y resumen en localStorage. Re-importar **reemplaza ambos** ("borrar y volver cargar").
@@ -1080,7 +1082,7 @@ La interfaz es un **recomendador por filtros**, no un visor de grafos. El estudi
 | **4. Próximas materias** (principal) | Chips con razón; colores: disponible, sí-o-sí, evitar, cuello de botella. |
 | **5. Ruta por semestre** | Acordeón de semestres con totales; exportar JSON/texto. |
 | **6. Cuellos de botella** | Top de cuellos y costo de evitarlos (solo materias necesarias). |
-| **7. Avance por tipología** | `ProgressPanel`: arriba, la tabla "Resumen de créditos" importada del SIA (con badge "Importado del SIA — al momento de importar"); abajo, el avance calculado con el pensum por componente (RF-22). Sin importación, solo se muestra el cálculo. |
+| **7. Avance por tipología** | `ProgressPanel`: arriba, la tabla "Resumen de créditos" importada del SIA (con badge "Importado del SIA — al momento de importar"); abajo, el avance calculado con el pensum **agrupado bajo las tipologías y el orden del SIA** (`GRUPOS_SIA` en `cupos.ts`): encabezado SIA + subtotal de exigidos del pensum + sub-filas con el nombre del pensum (RF-22). Nota al pie: Nivelación no cuenta para la graduación. Sin importación, solo se muestra el cálculo. |
 | **8. Advertencias** | Mínimo de créditos UNAL, "en curso" antiguas, cupos incompletos, libre elección pendiente. |
 | **9. Configuración avanzada** | Timeout del modo exacto (v1.0). |
 
@@ -1199,13 +1201,14 @@ La interfaz es un **recomendador por filtros**, no un visor de grafos. El estudi
 | TC-10 | Duplicados del SIA | `1000005-M` y `3010435` con perdida + aprobada | Estado efectivo `aprobada` en ambos; no se recomiendan. |
 | TC-11 | Materias inscritas (en curso) | Marcar `3010425` como `en curso` | No se recomienda; suma como inscrita al cupo de Disciplinar Optativa en `ProgressPanel`. |
 | TC-12 | Importar con bloque "Resumen de créditos" | Texto real con el bloque (encabezado celda-por-línea y en una sola línea) | Parser extrae 9 filas (`22/6/16/9/6` … `TOTAL ESTUDIANTE 176/144/32/14/151`); sin bloque → `[]`; segunda aparición → se ignora; `ProgressPanel` muestra la tabla SIA arriba y el cálculo abajo; re-importar reemplaza ambos. |
+| TC-13 | Vista previa con nombres y panel agrupado | Texto con asignaturas; `GRUPOS_SIA` vs pensum real | Cada item lleva `nombre_sia` real (respaldo "(sin nombre en el texto)"); el cálculo agrupa los 8 componentes bajo 5 encabezados SIA en orden, subtotales de exigidos 22/43/57/33/6, sin pérdida de filas y sin NIVELACIÓN. |
 
 ### 25.3 Criterios de aceptación de v0.1
 
 - Cero errores de prerrequisitos en lo recomendado (RNF-07).
 - La ruta sugerida se calcula en menos de 2 segundos (RNF-01).
 - Un estudiante completa el flujo sin ayuda (RNF-02), también en móvil (RNF-08).
-- Los 12 casos de prueba pasan; TC-09 a TC-12 están automatizados con el fixture real (suite: `npm test`).
+- Los 13 casos de prueba pasan; TC-09 a TC-13 están automatizados con el fixture real (suite: `npm test`).
 - `npm run build` (incluye typecheck real con `tsc -p tsconfig.app.json`) termina sin errores.
 
 ---
@@ -1231,7 +1234,8 @@ La interfaz es un **recomendador por filtros**, no un visor de grafos. El estudi
 7. **Integración** en `App.tsx`, Web Worker, manejo de errores, responsive.
 8. **Cupos por componente**: `cupos.ts`, filtrado de recomendaciones, orden obligatorias-primero, cuellos acotados a materias necesarias, `ProgressPanel`, fixture real (`historial-sia-real.ts`) — corrección tras validar con historial real.
 9. **Resumen de créditos (SIA)**: extracción del bloque en el parser (dos variantes de encabezado), campo opcional `resumen_sia` en localStorage y tabla en `ProgressPanel` sobre el avance calculado.
-10. **Deploy** en GitHub Pages + README + caso de estudio.
+10. **UI de tipologías SIA**: `GRUPOS_SIA` (el cálculo se agrupa bajo los encabezados y el orden del SIA, con subtotales de exigidos del pensum), nota de Nivelación y `nombre_sia` real en la vista previa.
+11. **Deploy** en GitHub Pages + README + caso de estudio.
 
 ---
 

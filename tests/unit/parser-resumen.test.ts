@@ -77,6 +77,7 @@ describe('parser-sia: Resumen de créditos', () => {
     // El bloque no contamina el parseo de asignaturas.
     expect(resultado.items).toHaveLength(1)
     expect(resultado.items[0].codigo).toBe('1000004-M')
+    expect(resultado.items[0].nombre_sia).toBe('CÁLCULO DIFERENCIAL')
     expect(resultado.errores).toHaveLength(0)
   })
 

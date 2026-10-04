@@ -18,6 +18,44 @@ export const NOMBRES_COMPONENTE: Record<ComponenteId, string> = {
   libre_eleccion: 'Libre Elección',
 }
 
+export interface GrupoSIA {
+  /** Etiqueta tal como aparece en el bloque "Resumen de créditos" del SIA. */
+  etiqueta: string
+  /** Componentes del pensum que componen esa tipología del SIA. */
+  componentes: ComponenteId[]
+}
+
+/**
+ * Agrupación del avance calculado bajo las tipologías del SIA, en el mismo
+ * orden que el bloque "Resumen de créditos" (§17.1 del spec).
+ *
+ * - FUND. OBLIGATORIA y FUND. OPTATIVA del SIA son un solo componente en el
+ *   pensum (fundamentacion = 27 + 16).
+ * - DISCIPLINAR OBLIGATORIA del SIA se divide en las cuatro agrupaciones
+ *   disciplinares del programa curricular (27 + 9 + 11 + 10 = 57).
+ * - NIVELACIÓN no aparece: no cuenta para la graduación.
+ *
+ * Cada ComponenteId aparece exactamente una vez (lo verifican los tests).
+ */
+export const GRUPOS_SIA: GrupoSIA[] = [
+  { etiqueta: 'DISCIPLINAR OPTATIVA', componentes: ['optativas_tecnologicas'] },
+  {
+    etiqueta: 'FUND. OBLIGATORIA + FUND. OPTATIVA',
+    componentes: ['fundamentacion'],
+  },
+  {
+    etiqueta: 'DISCIPLINAR OBLIGATORIA',
+    componentes: [
+      'ciencias_computacion',
+      'ingenieria_software',
+      'sistemas',
+      'proyectos_ingenieria',
+    ],
+  },
+  { etiqueta: 'LIBRE ELECCIÓN', componentes: ['libre_eleccion'] },
+  { etiqueta: 'TRABAJO DE GRADO', componentes: ['trabajo_grado'] },
+]
+
 /**
  * Calcula el avance del estudiante por componente (tipología).
  *
