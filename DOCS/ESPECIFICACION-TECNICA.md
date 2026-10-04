@@ -146,7 +146,7 @@ Los requisitos se priorizan con el criterio MoSCoW (Must / Should / Could). El n
 | ID | Requisito | Prioridad | Nivel |
 |---|---|---|---|
 | RF-01 | Seleccionar carrera/pensum predeterminado. | Must | v0.1 |
-| RF-02 | Importar el historial académico pegando el texto copiado del SIA, con vista previa editable. | Must | v0.1 |
+| RF-02 | Importar el historial académico pegando el texto copiado del SIA, con vista previa editable; si el texto trae el bloque "Resumen de créditos", se importa junto con él. | Must | v0.1 |
 | RF-03 | Registrar y editar el historial manualmente (aprobadas, perdidas, en curso). | Must | v0.1 |
 | RF-04 | Configurar créditos mínimos y máximos por semestre, sin valores predeterminados. | Must | v0.1 |
 | RF-05 | Calcular la **ruta sugerida** (rápida y explicable). | Must | v0.1 |
@@ -449,11 +449,11 @@ Estudiante
 | Componente | Capa | Responsabilidad | Requisitos |
 |---|---|---|---|
 | `PensumSelector` | UI | Elegir pensum; se muestra solo si hay más de uno. | RF-01, RF-25 |
-| `HistoryImport` | UI | Pegar texto del SIA, previsualizar y confirmar. | RF-02 |
+| `HistoryImport` | UI | Pegar texto del SIA, previsualizar (incluye el "Resumen de créditos") y confirmar. | RF-02 |
 | `HistoryEditor` | UI | Editar el historial manualmente. | RF-03 |
 | `FilterPanel` | UI | Créditos mín/máx, prioridad, semestre objetivo, filtros por materia. | RF-04, RF-10, RF-11, RF-12, RF-13 |
 | `NextCoursesList` | UI | Vista principal: chips de próximas materias con razón. | RF-09 |
-| `ProgressPanel` | UI | Avance por componente (tipología): aprobados, inscritos, excedentes. | RF-18 (parcial), RF-22 |
+| `ProgressPanel` | UI | Arriba: tabla del "Resumen de créditos" importada del SIA; abajo: avance calculado por componente (tipología) con aprobados, inscritos y excedentes. | RF-18 (parcial), RF-22 |
 | `SemesterPlanView` | UI | Ruta por semestre y exportación. | RF-16 |
 | `BottleneckAlert` | UI | Top de cuellos de botella y costo de evitarlos. | RF-08 |
 | `ConflictToast` | UI | Explicar conflictos sin bloquear. | RNF-04 |
@@ -467,7 +467,7 @@ Estudiante
 | `BottleneckDetector` | Dominio | Ruta crítica y cuellos de botella. | RF-08 |
 | `ExplanationGenerator` | Dominio | Generar razones legibles. | RNF-04 |
 | Pensum JSON | Datos | Dataset verificado de la carrera. | RF-01 |
-| localStorage | Datos | Perfil, historial y filtros. | RF-03, RNF-05, RNF-06 |
+| localStorage | Datos | Perfil, historial, filtros y resumen SIA. | RF-03, RNF-05, RNF-06 |
 
 **Nota de diseño**: `useRecommendation` es el único punto de entrada al motor. La capa de dominio no conoce React ni el almacenamiento. Se evita el "god module": el `DPPlanner` compone funciones puras (`TopologicalSort`, `BottleneckDetector`, `ExplanationGenerator`) sin acoplarlas entre sí salvo a través del propio planner.
 
@@ -541,6 +541,18 @@ interface HistorialItem {
 }
 
 type HistorialAcademico = HistorialItem[];
+
+// ═══════════════ RESUMEN SIA (localStorage, opcional) ═══════════════
+// Bloque "Resumen de créditos" copiado del SIA (§17.1). Informativo:
+// el motor NO lo consume; los cupos salen del pensum JSON (§13.1 componentes).
+interface FilaResumenSIA {
+  tipologia: string;                     // "DISCIPLINAR OPTATIVA" … "TOTAL ESTUDIANTE"
+  exigidos: number;
+  aprobados: number;
+  pendientes: number;
+  inscritos: number;
+  cursados: number;                      // créditos vistos (no necesariamente aprobados)
+}
 
 // ═══════════════ FILTROS (localStorage) ═══════════════
 type TipoFiltro = 'evitar' | 'si_o_si';
@@ -712,6 +724,7 @@ El historial puede tener varias entradas para la misma asignatura (por ejemplo, 
 | Pensum (carreras predeterminadas) | JSON estático en el repositorio | Permanente (git) | Repositorio |
 | Perfil del estudiante | localStorage | Entre sesiones | Navegador del usuario |
 | Historial académico | localStorage | Entre sesiones | Navegador del usuario |
+| Resumen de créditos (SIA) | localStorage (`resumen_sia`, campo opcional) | Entre sesiones | Navegador del usuario |
 | Filtros activos | localStorage | Entre sesiones | Navegador del usuario |
 | Ruta calculada | No se persiste | Efímera | Motor (derivada) |
 
@@ -719,7 +732,8 @@ El historial puede tener varias entradas para la misma asignatura (por ejemplo, 
 
 - **localStorage en v0.1**: síncrono, sin dependencias, suficiente para <100 KB. Se versiona con una clave `schema_version` para migrar el formato.
 - **IndexedDB en v0.2**, si el volumen de datos o la cantidad de perfiles lo justifican.
-- **Exportación/importación JSON**: un archivo con `{ schema_version, perfil, historial, filtros, pensum_id }`.
+- **Exportación/importación JSON**: un archivo con `{ schema_version, perfil, historial, resumen_sia, filtros, pensum_id }`.
+- **`resumen_sia` opcional**: los estados guardados sin él (schema v1 previo) siguen siendo válidos; se reemplaza completo en cada re-importación.
 - **Sin cuentas ni sincronización**: cambiar de dispositivo requiere exportar e importar. Limitación aceptada para v0.1.
 
 ---
@@ -881,6 +895,7 @@ SALIDA: RutaCompleta
 - La **libre elección** no se agenda desde el motor: sus créditos llegan con códigos fuera del pensum o con excedentes de otros componentes; si queda pendiente se reporta como advertencia.
 - El motor no recomienda materias `en_curso` (ya cubiertas este periodo).
 - Los "sí o sí" del usuario tienen prioridad absoluta dentro del cupo del semestre.
+- El **"Resumen de créditos" importado del SIA** (§17.1) es informativo: no entra al algoritmo; los cupos que usa el motor siguen siendo los del pensum JSON (`componentes`).
 
 ### 16.4 Prioridades y su efecto en el orden
 
@@ -968,6 +983,29 @@ Fundamentos de programación (3010435)	3	DISCIPLINAR OBLIGATORIA	2022-2S Ordinar
 REPROBADA
 ```
 
+Al final del listado (si el Portal lo incluye en la copia) viene el bloque de resumen. Se observaron **dos variantes de encabezado**, ambas soportadas:
+
+- **(a) celda-por-línea** (copia real): cada celda del encabezado en su propia línea, con líneas de solo tabuladores intercaladas.
+- **(b) una sola línea**: encabezado completo separado por tabuladores.
+
+```text
+Resumen de créditos
+Tipologías	Exigidos	Aprobados	Pendientes	Inscritos	Cursados
+DISCIPLINAR OPTATIVA	22	6	16	9	6
+FUND. OBLIGATORIA	27	27	0	0	31
+FUND. OPTATIVA	16	16	0	0	19
+DISCIPLINAR OBLIGATORIA	57	53	4	0	56
+LIBRE ELECCIÓN	32	26	6	5	23
+TRABAJO DE GRADO	6	0	6	0	0
+TOTAL	160	128	32	14	135
+NIVELACIÓN	16	16	0	0	16
+TOTAL ESTUDIANTE	176	144	32	14	151
+Total Créditos Excedentes3
+Porcentaje de Avance80,0%
+```
+
+Filas de datos: `TIPOLOGÍA <tab> exigidos <tab> aprobados <tab> pendientes <tab> inscritos <tab> cursados`. `Cursados` = créditos ya vistos (no necesariamente aprobados). Se ignoran excedentes, cancelados, porcentaje de avance y cupo (no forman parte de lo solicitado).
+
 ### 17.2 Reglas de parseo
 
 - **Nombre y código**: el código está entre paréntesis al final del nombre de la asignatura, p. ej. `(3009150)` o `(1000005-M)`.
@@ -983,6 +1021,7 @@ REPROBADA
   - `NIVELACIÓN` → **ignorar** (no cuenta para la graduación)
 - **Códigos con sufijo `-M`**: se normalizan conservando el sufijo (p. ej. `1000005-M`).
 - **Materias repetidas**: se conservan todas las entradas; el estado efectivo resuelve la combinación (aprobada gana).
+- **Bloque "Resumen de créditos"**: se detecta la línea exacta `Resumen de créditos` (sensible a mayúsculas/minúsculas y acentos, normalizada; solo la primera aparición). Desde ahí se leen hasta 61 líneas; una fila es válida si tiene ≥6 celdas (tab o 2+ espacios): etiqueta no numérica + 5 enteros → `FilaResumenSIA`. Se corta si se repite el título. Las líneas que no casan (encabezado, excedentes, avance, cupo) se descartan sin generar errores.
 
 ### 17.3 Salida del parser
 
@@ -991,8 +1030,10 @@ interface ParseResult {
   items: HistorialItem[];
   errores: ParseError[];   // líneas no reconocidas
   warnings: string[];      // p. ej. nivelación ignorada
+  resumen_creditos: FilaResumenSIA[]; // bloque "Resumen de créditos" ([] si no viene)
 }
 interface ParseError { linea: string; mensaje: string; }
+// FilaResumenSIA (§13.1): { tipologia, exigidos, aprobados, pendientes, inscritos, cursados }
 ```
 
 ### 17.4 Flujo de interfaz
@@ -1000,8 +1041,9 @@ interface ParseError { linea: string; mensaje: string; }
 1. **Textarea** para pegar (Ctrl+V).
 2. Botón "Vista previa".
 3. **Tabla editable** con lo detectado: código, nombre, estado, periodo, nota.
-4. Líneas no reconocidas se listan por separado.
-5. Botón "Confirmar e importar" → guarda en localStorage.
+4. Si el texto traía el bloque de resumen, la vista previa muestra una sección "Resumen de créditos detectado: N fila(s)" con su tabla.
+5. Líneas no reconocidas se listan por separado.
+6. Botón "Confirmar e importar" → guarda historial y resumen en localStorage. Re-importar **reemplaza ambos** ("borrar y volver cargar").
 
 ---
 
@@ -1038,7 +1080,7 @@ La interfaz es un **recomendador por filtros**, no un visor de grafos. El estudi
 | **4. Próximas materias** (principal) | Chips con razón; colores: disponible, sí-o-sí, evitar, cuello de botella. |
 | **5. Ruta por semestre** | Acordeón de semestres con totales; exportar JSON/texto. |
 | **6. Cuellos de botella** | Top de cuellos y costo de evitarlos (solo materias necesarias). |
-| **7. Avance por tipología** | `ProgressPanel`: aprobados/exigidos por componente, inscritos y excedentes (RF-22). |
+| **7. Avance por tipología** | `ProgressPanel`: arriba, la tabla "Resumen de créditos" importada del SIA (con badge "Importado del SIA — al momento de importar"); abajo, el avance calculado con el pensum por componente (RF-22). Sin importación, solo se muestra el cálculo. |
 | **8. Advertencias** | Mínimo de créditos UNAL, "en curso" antiguas, cupos incompletos, libre elección pendiente. |
 | **9. Configuración avanzada** | Timeout del modo exacto (v1.0). |
 
@@ -1136,7 +1178,7 @@ La interfaz es un **recomendador por filtros**, no un visor de grafos. El estudi
 
 ### 25.1 Estrategia
 
-- **Unitarias (Vitest)**: dominio puro — `TopologicalSort`, `DPPlanner`, `BottleneckDetector`, `ExplanationGenerator`, `cupos` (avance por componente), parser del SIA.
+- **Unitarias (Vitest)**: dominio puro — `TopologicalSort`, `DPPlanner`, `BottleneckDetector`, `ExplanationGenerator`, `cupos` (avance por componente), parser del SIA (historial y bloque "Resumen de créditos").
 - **Fixture real**: `tests/fixtures/historial-sia-real.ts` con el historial SIA de un estudiante real (43 asignaturas, duplicados incluidos) para validar recomendaciones y avance contra datos reales.
 - **Integración**: hooks y flujo "cambiar filtro → recalcular".
 - **Extremo a extremo (Playwright, opcional)**: importar historial → ver próximas → filtrar → simular → exportar.
@@ -1156,13 +1198,14 @@ La interfaz es un **recomendador por filtros**, no un visor de grafos. El estudi
 | TC-09 | Historial real con cupos cubiertos (fixture `tests/fixtures/historial-sia-real.ts`) | 43 asignaturas reales; fundamentación 46/43 | `3006829` Química, `1000017-M` Física Eléctrica y `1000006-M` Cálculo en Varias Variables **no** aparecen en ninguna recomendación ni en los cuellos; ruta corta sin bloqueo. |
 | TC-10 | Duplicados del SIA | `1000005-M` y `3010435` con perdida + aprobada | Estado efectivo `aprobada` en ambos; no se recomiendan. |
 | TC-11 | Materias inscritas (en curso) | Marcar `3010425` como `en curso` | No se recomienda; suma como inscrita al cupo de Disciplinar Optativa en `ProgressPanel`. |
+| TC-12 | Importar con bloque "Resumen de créditos" | Texto real con el bloque (encabezado celda-por-línea y en una sola línea) | Parser extrae 9 filas (`22/6/16/9/6` … `TOTAL ESTUDIANTE 176/144/32/14/151`); sin bloque → `[]`; segunda aparición → se ignora; `ProgressPanel` muestra la tabla SIA arriba y el cálculo abajo; re-importar reemplaza ambos. |
 
 ### 25.3 Criterios de aceptación de v0.1
 
 - Cero errores de prerrequisitos en lo recomendado (RNF-07).
 - La ruta sugerida se calcula en menos de 2 segundos (RNF-01).
 - Un estudiante completa el flujo sin ayuda (RNF-02), también en móvil (RNF-08).
-- Los 11 casos de prueba pasan; TC-09 a TC-11 están automatizados con el fixture real (suite: `npm test`).
+- Los 12 casos de prueba pasan; TC-09 a TC-12 están automatizados con el fixture real (suite: `npm test`).
 - `npm run build` (incluye typecheck real con `tsc -p tsconfig.app.json`) termina sin errores.
 
 ---
@@ -1187,7 +1230,8 @@ La interfaz es un **recomendador por filtros**, no un visor de grafos. El estudi
 6. **Componentes de interfaz** (`HistoryImport`, `FilterPanel`, `NextCoursesList`, `SemesterPlanView`, `BottleneckAlert`, `ConflictToast`, `AdvancedSettings`).
 7. **Integración** en `App.tsx`, Web Worker, manejo de errores, responsive.
 8. **Cupos por componente**: `cupos.ts`, filtrado de recomendaciones, orden obligatorias-primero, cuellos acotados a materias necesarias, `ProgressPanel`, fixture real (`historial-sia-real.ts`) — corrección tras validar con historial real.
-9. **Deploy** en GitHub Pages + README + caso de estudio.
+9. **Resumen de créditos (SIA)**: extracción del bloque en el parser (dos variantes de encabezado), campo opcional `resumen_sia` en localStorage y tabla en `ProgressPanel` sobre el avance calculado.
+10. **Deploy** en GitHub Pages + README + caso de estudio.
 
 ---
 
@@ -1205,6 +1249,7 @@ Problema → Objetivo → Requisito → Decisión → Componente → Persistenci
 | Materias que atrasan la carrera | Detectar cuellos de botella | RF-08 | DA-02 | `BottleneckDetector` | Derivada | §16.6 |
 | Recomendar materias con cupo ya cubierto | Respetar cupos por tipología | RF-22, RN-10 | DA-02 | `cupos.ts`, `DPPlanner` | Derivada | §16.3 |
 | No saber en qué tipología voy | Mostrar avance por componente | RF-18 (parcial), RF-22 | DA-07 | `ProgressPanel` | Derivada | §19.2 |
+| No saber el avance oficial del SIA vs. el calculado | Mostrar ambos lado a lado | RF-02, RF-18 (parcial) | DA-07, DA-08 | `parser-sia`, `ProgressPanel` | localStorage (`resumen_sia`) | §17.1, §17.3 |
 | Datos del pensum dispersos | Tener una fuente de verdad | RF-01 | DA-05, DA-06 | Pensum JSON | JSON en repositorio | §18 |
 
 ---
