@@ -21,6 +21,7 @@ export function App() {
     pensumError,
     perfil,
     historial,
+    resumenSia,
     filtros,
     ruta,
     recalculando,
@@ -269,7 +270,7 @@ export function App() {
                   onToggleFiltro={handleToggleFiltro}
                 />
 
-                <ProgressPanel avance={ruta?.avance ?? []} />
+                <ProgressPanel avance={ruta?.avance ?? []} resumenSia={resumenSia} />
 
                 <BottleneckAlert cuellos={ruta?.cuellos_botella ?? []} />
 
