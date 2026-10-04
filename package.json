@@ -1,0 +1,42 @@
+{
+  "name": "matricula-inteligente-unal",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Recomendador de matrícula para estudiantes de la UNAL (Facultad de Minas)",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "lint": "oxlint",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "extract:pensum": "tsx scripts/extract-pensum.ts",
+    "validate:pensum": "tsx scripts/validate-pensum.ts"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "immer": "^10.1.1",
+    "lucide-react": "^0.544.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "zod": "^3.25.76",
+    "zustand": "^5.0.8"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.14",
+    "@types/node": "^24.13.3",
+    "@types/pdf-parse": "^1.1.5",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "@vitejs/plugin-react": "^6.1.1",
+    "jsdom": "^27.0.0",
+    "oxlint": "^1.81.0",
+    "pdf-parse": "^1.1.1",
+    "tailwindcss": "^4.1.14",
+    "tsx": "^4.20.6",
+    "typescript": "~6.0.2",
+    "vite": "^8.3.0",
+    "vitest": "^3.2.4"
+  }
+}

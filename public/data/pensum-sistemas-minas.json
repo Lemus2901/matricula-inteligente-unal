@@ -1,0 +1,1141 @@
+{
+  "pensum_id": "sistemas-minas-2024",
+  "programa": "Ingeniería de Sistemas e Informática",
+  "facultad": "Facultad de Minas",
+  "sede": "Medellín",
+  "creditos_totales": 161,
+  "asignaturas": [
+    {
+      "codigo": "1000003-M",
+      "nombre": "Álgebra Lineal",
+      "alias": null,
+      "creditos": 4,
+      "obligatoria": true,
+      "semestre_en_plan": 2,
+      "prerrequisitos": [
+        "1000008-M"
+      ],
+      "agrupacion": "fundamentacion",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — fundamentacion"
+    },
+    {
+      "codigo": "1000004-M",
+      "nombre": "Cálculo Diferencial",
+      "alias": null,
+      "creditos": 4,
+      "obligatoria": true,
+      "semestre_en_plan": 2,
+      "prerrequisitos": [],
+      "agrupacion": "fundamentacion",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — fundamentacion"
+    },
+    {
+      "codigo": "1000005-M",
+      "nombre": "Cálculo Integral",
+      "alias": null,
+      "creditos": 4,
+      "obligatoria": true,
+      "semestre_en_plan": 3,
+      "prerrequisitos": [
+        "1000004-M"
+      ],
+      "agrupacion": "fundamentacion",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — fundamentacion"
+    },
+    {
+      "codigo": "1000006-M",
+      "nombre": "Cálculo en Varias Variables",
+      "alias": null,
+      "creditos": 4,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "1000005-M"
+      ],
+      "agrupacion": "fundamentacion",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — fundamentacion"
+    },
+    {
+      "codigo": "1000007-M",
+      "nombre": "Ecuaciones Diferenciales",
+      "alias": null,
+      "creditos": 4,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "1000005-M",
+        "1000003-M"
+      ],
+      "agrupacion": "fundamentacion",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — fundamentacion"
+    },
+    {
+      "codigo": "1000008-M",
+      "nombre": "Geometría Vectorial y Analítica",
+      "alias": null,
+      "creditos": 4,
+      "obligatoria": true,
+      "semestre_en_plan": 1,
+      "prerrequisitos": [],
+      "agrupacion": "fundamentacion",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — fundamentacion"
+    },
+    {
+      "codigo": "1000009-M",
+      "nombre": "Biología General",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [],
+      "agrupacion": "fundamentacion",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — fundamentacion"
+    },
+    {
+      "codigo": "1000017-M",
+      "nombre": "Física de Electricidad y Magnetismo",
+      "alias": null,
+      "creditos": 4,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "1000019-M"
+      ],
+      "agrupacion": "fundamentacion",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — fundamentacion"
+    },
+    {
+      "codigo": "1000019-M",
+      "nombre": "Física Mecánica",
+      "alias": null,
+      "creditos": 4,
+      "obligatoria": true,
+      "semestre_en_plan": 3,
+      "prerrequisitos": [
+        "3010651"
+      ],
+      "agrupacion": "fundamentacion",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — fundamentacion"
+    },
+    {
+      "codigo": "1000020-M",
+      "nombre": "Física de Oscilaciones, Ondas y Óptica",
+      "alias": null,
+      "creditos": 4,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "1000017-M"
+      ],
+      "agrupacion": "fundamentacion",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — fundamentacion"
+    },
+    {
+      "codigo": "3006825",
+      "nombre": "Laboratorio de Química General",
+      "alias": null,
+      "creditos": 2,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "3006829"
+      ],
+      "agrupacion": "fundamentacion",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — fundamentacion"
+    },
+    {
+      "codigo": "3006829",
+      "nombre": "Química General",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [],
+      "agrupacion": "fundamentacion",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — fundamentacion"
+    },
+    {
+      "codigo": "3006905",
+      "nombre": "Matemáticas Especiales",
+      "alias": null,
+      "creditos": 4,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "1000007-M"
+      ],
+      "agrupacion": "fundamentacion",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — fundamentacion"
+    },
+    {
+      "codigo": "3006906",
+      "nombre": "Matemáticas Discretas",
+      "alias": null,
+      "creditos": 4,
+      "obligatoria": true,
+      "semestre_en_plan": 1,
+      "prerrequisitos": [],
+      "agrupacion": "fundamentacion",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — fundamentacion"
+    },
+    {
+      "codigo": "3006907",
+      "nombre": "Métodos Numéricos",
+      "alias": null,
+      "creditos": 4,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "1000005-M",
+        "1000003-M"
+      ],
+      "agrupacion": "fundamentacion",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — fundamentacion"
+    },
+    {
+      "codigo": "3006915",
+      "nombre": "Estadística II",
+      "alias": null,
+      "creditos": 4,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "3010651"
+      ],
+      "agrupacion": "fundamentacion",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — fundamentacion"
+    },
+    {
+      "codigo": "3006927",
+      "nombre": "Estadística Descriptiva y Exploratoria",
+      "alias": null,
+      "creditos": 4,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "3006931"
+      ],
+      "agrupacion": "fundamentacion",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — fundamentacion"
+    },
+    {
+      "codigo": "3006931",
+      "nombre": "Introducción al Manejo de Datos Estadísticos",
+      "alias": null,
+      "creditos": 4,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [],
+      "agrupacion": "fundamentacion",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — fundamentacion"
+    },
+    {
+      "codigo": "3007202",
+      "nombre": "Fundamentos de Economía",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [],
+      "agrupacion": "optativas_tecnologicas",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — optativas_tecnologicas"
+    },
+    {
+      "codigo": "3007311",
+      "nombre": "Dinámica de Sistemas",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "3007331"
+      ],
+      "agrupacion": "optativas_tecnologicas",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — optativas_tecnologicas"
+    },
+    {
+      "codigo": "3007323",
+      "nombre": "Investigación de Mercados",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "3006915",
+        "3010524"
+      ],
+      "agrupacion": "optativas_tecnologicas",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — optativas_tecnologicas"
+    },
+    {
+      "codigo": "3007324",
+      "nombre": "Investigación de Operaciones I",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": true,
+      "semestre_en_plan": 4,
+      "prerrequisitos": [
+        "3010435",
+        "1000003-M"
+      ],
+      "agrupacion": "sistemas",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — sistemas"
+    },
+    {
+      "codigo": "3007325",
+      "nombre": "Investigación de Operaciones II",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "3007324"
+      ],
+      "agrupacion": "optativas_tecnologicas",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — optativas_tecnologicas"
+    },
+    {
+      "codigo": "3007331",
+      "nombre": "Simulación de Sistemas",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": true,
+      "semestre_en_plan": 5,
+      "prerrequisitos": [
+        "3007324"
+      ],
+      "agrupacion": "sistemas",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — sistemas"
+    },
+    {
+      "codigo": "3007595",
+      "nombre": "Redes Teleinformáticas I",
+      "alias": null,
+      "creditos": 4,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "3007865"
+      ],
+      "agrupacion": "optativas_tecnologicas",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — optativas_tecnologicas"
+    },
+    {
+      "codigo": "3007596",
+      "nombre": "Redes Teleinformáticas II",
+      "alias": null,
+      "creditos": 4,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "3007595"
+      ],
+      "agrupacion": "optativas_tecnologicas",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — optativas_tecnologicas"
+    },
+    {
+      "codigo": "3007597",
+      "nombre": "Redes Teleinformáticas III",
+      "alias": null,
+      "creditos": 4,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "3007596"
+      ],
+      "agrupacion": "optativas_tecnologicas",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — optativas_tecnologicas"
+    },
+    {
+      "codigo": "3007741",
+      "nombre": "Estructura de Datos",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": true,
+      "semestre_en_plan": 4,
+      "prerrequisitos": [
+        "3007744"
+      ],
+      "agrupacion": "ciencias_computacion",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — ciencias_computacion"
+    },
+    {
+      "codigo": "3007744",
+      "nombre": "Programación Orientada a Objetos",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": true,
+      "semestre_en_plan": 3,
+      "prerrequisitos": [
+        "3010435"
+      ],
+      "agrupacion": "ciencias_computacion",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — ciencias_computacion"
+    },
+    {
+      "codigo": "3007847",
+      "nombre": "Bases de Datos I",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": true,
+      "semestre_en_plan": 5,
+      "prerrequisitos": [
+        "3007741"
+      ],
+      "agrupacion": "ciencias_computacion",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — ciencias_computacion"
+    },
+    {
+      "codigo": "3007848",
+      "nombre": "Bases de Datos II",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "3007847"
+      ],
+      "agrupacion": "optativas_tecnologicas",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — optativas_tecnologicas"
+    },
+    {
+      "codigo": "3007850",
+      "nombre": "Diseño y Construcción de Productos de Software",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "3010440"
+      ],
+      "agrupacion": "optativas_tecnologicas",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — optativas_tecnologicas"
+    },
+    {
+      "codigo": "3007851",
+      "nombre": "Gestión de Proyectos de Software",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "3010440"
+      ],
+      "agrupacion": "optativas_tecnologicas",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — optativas_tecnologicas"
+    },
+    {
+      "codigo": "3007852",
+      "nombre": "Ingeniería de Requisitos",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": true,
+      "semestre_en_plan": 5,
+      "prerrequisitos": [
+        "3007853"
+      ],
+      "agrupacion": "ingenieria_software",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — ingenieria_software"
+    },
+    {
+      "codigo": "3007853",
+      "nombre": "Ingeniería de Software",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": true,
+      "semestre_en_plan": 4,
+      "prerrequisitos": [
+        "3007744"
+      ],
+      "agrupacion": "ingenieria_software",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — ingenieria_software"
+    },
+    {
+      "codigo": "3007854",
+      "nombre": "Técnicas de Aprendizaje Estadístico",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "3010476"
+      ],
+      "agrupacion": "optativas_tecnologicas",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — optativas_tecnologicas"
+    },
+    {
+      "codigo": "3007860",
+      "nombre": "Sistema de Recuperación de Información de Web",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "3010476"
+      ],
+      "agrupacion": "optativas_tecnologicas",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — optativas_tecnologicas"
+    },
+    {
+      "codigo": "3007862",
+      "nombre": "Visión Artificial",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "3010476"
+      ],
+      "agrupacion": "optativas_tecnologicas",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — optativas_tecnologicas"
+    },
+    {
+      "codigo": "3007865",
+      "nombre": "Redes y Telecomunicaciones I",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": true,
+      "semestre_en_plan": 5,
+      "prerrequisitos": [
+        "3007867"
+      ],
+      "agrupacion": "ciencias_computacion",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — ciencias_computacion"
+    },
+    {
+      "codigo": "3007867",
+      "nombre": "Sistemas Operativos",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": true,
+      "semestre_en_plan": 4,
+      "prerrequisitos": [
+        "3010426"
+      ],
+      "agrupacion": "ciencias_computacion",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — ciencias_computacion"
+    },
+    {
+      "codigo": "3007868",
+      "nombre": "Trabajo de Grado",
+      "alias": null,
+      "creditos": 6,
+      "obligatoria": true,
+      "semestre_en_plan": 10,
+      "prerrequisitos": [],
+      "agrupacion": "trabajo_grado",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — trabajo_grado"
+    },
+    {
+      "codigo": "3007871",
+      "nombre": "Programación Matemática",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "3007324"
+      ],
+      "agrupacion": "optativas_tecnologicas",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — optativas_tecnologicas"
+    },
+    {
+      "codigo": "3007872",
+      "nombre": "Sistemas Complejos",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "3007331"
+      ],
+      "agrupacion": "optativas_tecnologicas",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — optativas_tecnologicas"
+    },
+    {
+      "codigo": "3007873",
+      "nombre": "Teoría de la Organización Industrial",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "3007324"
+      ],
+      "agrupacion": "optativas_tecnologicas",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — optativas_tecnologicas"
+    },
+    {
+      "codigo": "3008883",
+      "nombre": "Fundamentos de Sistemas de Información e Inteligencia de Negocios",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "3010435"
+      ],
+      "agrupacion": "optativas_tecnologicas",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — optativas_tecnologicas"
+    },
+    {
+      "codigo": "3009137",
+      "nombre": "Estadística III",
+      "alias": null,
+      "creditos": 4,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "3006915"
+      ],
+      "agrupacion": "fundamentacion",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — fundamentacion"
+    },
+    {
+      "codigo": "3009150",
+      "nombre": "Redes Neuronales Artificiales y Algoritmos Bioinspirados",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "3010476"
+      ],
+      "agrupacion": "optativas_tecnologicas",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — optativas_tecnologicas"
+    },
+    {
+      "codigo": "3009151",
+      "nombre": "Introducción a la Robótica",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "3010476"
+      ],
+      "agrupacion": "optativas_tecnologicas",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — optativas_tecnologicas"
+    },
+    {
+      "codigo": "3009430",
+      "nombre": "Análisis y Diseño de Algoritmos",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "3007741"
+      ],
+      "agrupacion": "optativas_tecnologicas",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — optativas_tecnologicas"
+    },
+    {
+      "codigo": "3009936",
+      "nombre": "Seguridad Web",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "3007741"
+      ],
+      "agrupacion": "optativas_tecnologicas",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — optativas_tecnologicas"
+    },
+    {
+      "codigo": "3010334",
+      "nombre": "Fundamentos de Matemáticas",
+      "alias": null,
+      "creditos": 4,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [],
+      "agrupacion": "fundamentacion",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — fundamentacion"
+    },
+    {
+      "codigo": "3010391",
+      "nombre": "Geometría Aplicada",
+      "alias": null,
+      "creditos": 4,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "1000003-M"
+      ],
+      "agrupacion": "fundamentacion",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — fundamentacion"
+    },
+    {
+      "codigo": "3010407",
+      "nombre": "Estructuración y Evaluación de Proyectos de Ingeniería",
+      "alias": "Seminario 2",
+      "creditos": 3,
+      "obligatoria": true,
+      "semestre_en_plan": 8,
+      "prerrequisitos": [
+        "3010408"
+      ],
+      "agrupacion": "proyectos_ingenieria",
+      "requisito_porcentaje": {
+        "componente": "ciencias_computacion",
+        "porcentaje": 70
+      },
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — proyectos_ingenieria"
+    },
+    {
+      "codigo": "3010408",
+      "nombre": "Fundamentos de Proyectos en Ingeniería",
+      "alias": "Seminario 1",
+      "creditos": 3,
+      "obligatoria": true,
+      "semestre_en_plan": 7,
+      "prerrequisitos": [],
+      "agrupacion": "proyectos_ingenieria",
+      "requisito_porcentaje": [
+        {
+          "componente": "ciencias_computacion",
+          "porcentaje": 40
+        },
+        {
+          "componente": "ciencias_computacion",
+          "porcentaje": 20
+        },
+        {
+          "componente": "ciencias_computacion",
+          "porcentaje": 100
+        }
+      ],
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — proyectos_ingenieria"
+    },
+    {
+      "codigo": "3010415",
+      "nombre": "Introducción al Análisis de Decisiones",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": true,
+      "semestre_en_plan": 6,
+      "prerrequisitos": [
+        "3007331",
+        "3010651"
+      ],
+      "agrupacion": "sistemas",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — sistemas"
+    },
+    {
+      "codigo": "3010425",
+      "nombre": "Teoría Administrativa y Organizacional",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [],
+      "agrupacion": "optativas_tecnologicas",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — optativas_tecnologicas"
+    },
+    {
+      "codigo": "3010426",
+      "nombre": "Teoría de Lenguajes de Programación",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": true,
+      "semestre_en_plan": 3,
+      "prerrequisitos": [
+        "3010435",
+        "3006906"
+      ],
+      "agrupacion": "ciencias_computacion",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — ciencias_computacion"
+    },
+    {
+      "codigo": "3010435",
+      "nombre": "Fundamentos de Programación",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": true,
+      "semestre_en_plan": 2,
+      "prerrequisitos": [],
+      "agrupacion": "ciencias_computacion",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — ciencias_computacion"
+    },
+    {
+      "codigo": "3010438",
+      "nombre": "Introducción a la Ingeniería de Sistemas e Informática",
+      "alias": null,
+      "creditos": 2,
+      "obligatoria": true,
+      "semestre_en_plan": 1,
+      "prerrequisitos": [],
+      "agrupacion": "sistemas",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — sistemas"
+    },
+    {
+      "codigo": "3010439",
+      "nombre": "Proyecto Integrado de Ingeniería",
+      "alias": "Seminario 3",
+      "creditos": 4,
+      "obligatoria": true,
+      "semestre_en_plan": 9,
+      "prerrequisitos": [
+        "3010407"
+      ],
+      "agrupacion": "proyectos_ingenieria",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — proyectos_ingenieria"
+    },
+    {
+      "codigo": "3010440",
+      "nombre": "Calidad de Software",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": true,
+      "semestre_en_plan": 6,
+      "prerrequisitos": [
+        "3007852"
+      ],
+      "agrupacion": "ingenieria_software",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — ingenieria_software"
+    },
+    {
+      "codigo": "3010476",
+      "nombre": "Introducción a la Inteligencia Artificial",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": true,
+      "semestre_en_plan": 6,
+      "prerrequisitos": [
+        "3010651",
+        "3007847"
+      ],
+      "agrupacion": "ciencias_computacion",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — ciencias_computacion"
+    },
+    {
+      "codigo": "3010500",
+      "nombre": "Gestión del Talento Humano",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "3010425"
+      ],
+      "agrupacion": "optativas_tecnologicas",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — optativas_tecnologicas"
+    },
+    {
+      "codigo": "3010524",
+      "nombre": "Fundamentos de Mercadeo",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "3010425"
+      ],
+      "agrupacion": "optativas_tecnologicas",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — optativas_tecnologicas"
+    },
+    {
+      "codigo": "3010585",
+      "nombre": "Introducción a la Creación de Videojuegos",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "3007744"
+      ],
+      "agrupacion": "optativas_tecnologicas",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — optativas_tecnologicas"
+    },
+    {
+      "codigo": "3010651",
+      "nombre": "Estadística I",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": true,
+      "semestre_en_plan": 4,
+      "prerrequisitos": [
+        "1000003-M",
+        "1000005-M"
+      ],
+      "agrupacion": "fundamentacion",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — fundamentacion"
+    },
+    {
+      "codigo": "3010757",
+      "nombre": "Ciencias de la Computación y Aplicaciones Móviles",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "3007847",
+        "3007865"
+      ],
+      "agrupacion": "optativas_tecnologicas",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — optativas_tecnologicas"
+    },
+    {
+      "codigo": "3010836",
+      "nombre": "Cátedra de Sistemas: una Visión Histórico-Cultural de la Computación",
+      "alias": null,
+      "creditos": 2,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "3010438"
+      ],
+      "agrupacion": "optativas_tecnologicas",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — optativas_tecnologicas"
+    },
+    {
+      "codigo": "3011018",
+      "nombre": "Creación Multimedia",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "3007744"
+      ],
+      "agrupacion": "optativas_tecnologicas",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — optativas_tecnologicas"
+    },
+    {
+      "codigo": "3011019",
+      "nombre": "Desarrollo Web",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "3007847",
+        "3007865"
+      ],
+      "agrupacion": "optativas_tecnologicas",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — optativas_tecnologicas"
+    },
+    {
+      "codigo": "3011020",
+      "nombre": "Fundamentos de Analítica",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": true,
+      "semestre_en_plan": 6,
+      "prerrequisitos": [
+        "3010651",
+        "3007847"
+      ],
+      "agrupacion": "ciencias_computacion",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — ciencias_computacion"
+    },
+    {
+      "codigo": "3011021",
+      "nombre": "Programación para Ingeniería",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "1000003-M",
+        "3010435"
+      ],
+      "agrupacion": "optativas_tecnologicas",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — optativas_tecnologicas"
+    },
+    {
+      "codigo": "3011034",
+      "nombre": "Servicios en la Nube",
+      "alias": null,
+      "creditos": 3,
+      "obligatoria": false,
+      "semestre_en_plan": null,
+      "prerrequisitos": [
+        "3007847",
+        "3007865"
+      ],
+      "agrupacion": "optativas_tecnologicas",
+      "requisito_porcentaje": null,
+      "verificado": true,
+      "fuente_ref": "PDF AGRUPACIONES — optativas_tecnologicas"
+    }
+  ],
+  "componentes": {
+    "fundamentacion": {
+      "creditos_exigidos": 43,
+      "creditos_obligatorios": 27
+    },
+    "ciencias_computacion": {
+      "creditos_exigidos": 27,
+      "creditos_obligatorios": 27
+    },
+    "ingenieria_software": {
+      "creditos_exigidos": 9,
+      "creditos_obligatorios": 9
+    },
+    "sistemas": {
+      "creditos_exigidos": 11,
+      "creditos_obligatorios": 11
+    },
+    "proyectos_ingenieria": {
+      "creditos_exigidos": 10,
+      "creditos_obligatorios": 10
+    },
+    "optativas_tecnologicas": {
+      "creditos_exigidos": 22,
+      "creditos_obligatorios": 0
+    },
+    "trabajo_grado": {
+      "creditos_exigidos": 6,
+      "creditos_obligatorios": 6
+    },
+    "libre_eleccion": {
+      "creditos_exigidos": 33,
+      "creditos_obligatorios": 0
+    }
+  }
+}
