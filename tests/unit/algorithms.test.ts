@@ -4,7 +4,7 @@ import { construirGrafo } from '../../src/core/pensum/graph'
 import { planificar } from '../../src/core/algorithm/dp-planner'
 import { detectarCuellosBotella, calcularLongitudesCadena } from '../../src/core/algorithm/bottleneck'
 import { parsearHistorialSIA } from '../../src/core/pensum/parser-sia'
-import type { Pensum, HistorialAcademico, PerfilEstudiante, MapaEstadoEfectivo, FiltroMateria } from '../../src/core/pensum/types'
+import type { Pensum, HistorialAcademico, PerfilEstudiante, FiltroMateria } from '../../src/core/pensum/types'
 
 const pensumMock: Pensum = {
   pensum_id: 'test',
@@ -67,14 +67,13 @@ describe('estado.ts', () => {
   it('detecta materias pendientes', () => {
     const graph = construirGrafo(pensumMock)
     const estado = new Map<string, any>([['A', 'aprobada']])
-    const pendientes = quedanPendientes(construirGrafo(pensumMock), estado)
+    const pendientes = quedanPendientes(graph, estado)
     expect(pendientes.length).toBeGreaterThan(0)
   })
 })
 
 describe('dp-planner.ts', () => {
   it('genera ruta para estudiante sin historial', () => {
-    const perfil: PerfilEstudiante = { ...perfilBasico, historial: [] }
     const input = {
       pensum: pensumMock,
       historial: [],
@@ -129,7 +128,6 @@ describe('dp-planner.ts', () => {
 describe('bottleneck.ts', () => {
   it('detecta cuellos de botella en cadena lineal', () => {
     const graph = construirGrafo(pensumMock)
-    const estado = new Map<string, any>()
     const niveles = new Map<string, number>([
       ['A', 0], ['B', 1], ['C', 2], ['D', 3], ['E', 1], ['F', 2],
     ])

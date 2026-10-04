@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { Search, CheckCircle, XCircle, MinusCircle } from 'lucide-react'
-import type { Pensum, Asignatura, EstadoMateria } from '../core/pensum/types'
+import type { Pensum, Asignatura, EstadoEfectivo, EstadoMateria } from '../core/pensum/types'
 
 interface HistoryEditorProps {
   pensum: Pensum
-  historial: Record<string, EstadoMateria>
+  historial: Record<string, EstadoEfectivo>
   onChange: (codigo: string, estado: EstadoMateria) => void
 }
 
@@ -50,7 +50,7 @@ export function HistoryEditor({ pensum, historial, onChange }: HistoryEditorProp
     onChange(codigo, siguiente)
   }
 
-  const getBadge = (estado: EstadoMateria) => {
+  const getBadge = (estado: EstadoEfectivo) => {
     switch (estado) {
       case 'aprobada':
         return <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800"><CheckCircle className="w-3 h-3 mr-1" /> Aprobada</span>

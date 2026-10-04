@@ -1,6 +1,8 @@
 import { useEffect, useState, useCallback } from 'react'
-import { AlertTriangle, X, ChevronDown, ChevronUp, RefreshCw, Download, Trash2 } from 'lucide-react'
+import { AlertTriangle, Download, Trash2 } from 'lucide-react'
 import { usePlannerStore } from './store/usePlannerStore'
+import { calcularEstadoEfectivo } from './core/algorithm/estado'
+import type { EstadoEfectivo } from './core/pensum/types'
 import { PensumSelector } from './ui/PensumSelector'
 import { HistoryImport } from './ui/HistoryImport'
 import { HistoryEditor } from './ui/HistoryEditor'
@@ -26,10 +28,6 @@ export function App() {
     setPerfil,
     setHistorial,
     setFiltros,
-    agregarFiltro,
-    removerFiltro,
-    limpiarFiltros,
-    importarHistorial,
     recalcular,
     exportar,
     limpiarTodo,
@@ -65,7 +63,7 @@ export function App() {
     const existe = filtrosActuales.some(f => f.codigo === codigo && f.tipo === tipo)
 
     if (existe) {
-      setFiltros(filtros => filtros.filter(f => f.codigo !== codigo || f.tipo !== tipo))
+      setFiltros(filtrosActuales.filter(f => f.codigo !== codigo || f.tipo !== tipo))
       return
     }
 
@@ -77,7 +75,7 @@ export function App() {
     if (tipo === 'si_o_si') {
       const asignatura = pensum.asignaturas.find(a => a.codigo === codigo)
       const estadoEfectivo = (cod: string) => {
-        const h = historial.find((h: any) => h.codigo === cod)
+        const h = historialActual.find((h: any) => h.codigo === cod)
         return h?.estado ?? 'no_vista'
       }
       if (asignatura && asignatura.prerrequisitos.some(p => estadoEfectivo(p) !== 'aprobada')) {
@@ -98,7 +96,7 @@ export function App() {
       return
     }
 
-    setFiltros(f => [...f.filter(f => f.codigo !== codigo || f.tipo !== tipo), { codigo, tipo, semestre_aplica: 1 }])
+    setFiltros([...filtrosActuales.filter(f => f.codigo !== codigo || f.tipo !== tipo), { codigo, tipo, semestre_aplica: 1 }])
   }, [setFiltros])
 
   const handleExportar = () => {
@@ -113,9 +111,10 @@ export function App() {
     }
   }
 
-  // Datos para HistoryEditor
-  const historialMap: Record<string, any> = {}
-  historial.forEach(h => { historialMap[h.codigo] = h.estado })
+  // Estado efectivo por código para HistoryEditor (resuelve duplicados: aprobada gana)
+  const historialMap: Record<string, EstadoEfectivo> = Object.fromEntries(
+    calcularEstadoEfectivo(historial),
+  )
 
   if (pensumLoading) {
     return (
@@ -208,7 +207,7 @@ export function App() {
                 <HistoryImport onImport={handleImportar} />
                 <HistoryEditor
                   pensum={pensum}
-                  historial={Object.fromEntries(historial.map(h => [h.codigo, h.estado]))}
+                  historial={historialMap}
                   onChange={(codigo, estado) => {
                     const idx = historial.findIndex(h => h.codigo === codigo)
                     if (idx >= 0) {
@@ -243,14 +242,14 @@ export function App() {
           </aside>
 
           <div className="lg:col-span-3 space-y-6">
-            {pensumLoading && (
+            {recalculando && (
               <div className="bg-white p-8 rounded-lg border border-gray-200 text-center">
                 <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
                 <p className="text-gray-600">Calculando ruta...</p>
               </div>
             )}
 
-            {!pensumLoading && (
+            {!recalculando && (
               <>
                 <NextCoursesList
                   proximas={ruta?.proximas_materias ?? []}

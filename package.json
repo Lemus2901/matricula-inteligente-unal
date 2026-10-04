@@ -6,7 +6,7 @@
   "description": "Recomendador de matrícula para estudiantes de la UNAL (Facultad de Minas)",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build",
+    "build": "tsc -p tsconfig.app.json && vite build",
     "preview": "vite preview",
     "lint": "oxlint",
     "test": "vitest run",
