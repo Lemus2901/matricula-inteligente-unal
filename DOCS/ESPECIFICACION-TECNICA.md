@@ -105,13 +105,16 @@ Los sistemas oficiales (SIA) sirven para **inscribir**, pero casi nunca para **p
 - Prioridad: terminar rápido, cuidar el promedio, carga cómoda.
 - Semestre objetivo opcional con indicador "llega / no llega".
 - Simulación "¿y si pierdo esta?" (nueva ruta y costo en semestres).
-- Detección de cuellos de botella.
-- Advertencias no bloqueantes (mínimo de créditos de la UNAL, materias "en curso" antiguas).
+- Detección de cuellos de botella (solo sobre materias necesarias para graduarse).
+- Advertencias no bloqueantes (mínimo de créditos de la UNAL, materias "en curso" antiguas, cupos de componente incompletos, libre elección pendiente).
+- **Cupos por componente (tipología)**: el motor solo recomienda materias de un componente cuyo cupo está pendiente; los excedentes y los códigos fuera del pensum cuentan como libre elección (RF-22, RN-10).
+- **Avance por componente en la interfaz** (`ProgressPanel`): aprobados/exigidos por tipología, con inscritos y excedentes (parcial de RF-18).
+- Historial "en curso": no se recomienda y cuenta como inscritos del cupo de su componente.
 - Exportación de la ruta (JSON y texto legible).
 
 ### 4.2 Fuera de alcance de v0.1
 
-- Componentes, agrupaciones y porcentajes de avance con cálculo en el motor (los datos ya se cargan, pero el motor no los evalúa hasta v0.2).
+- Validación del avance porcentual de los Seminarios y del trabajo de grado (RN-08, RN-09; los datos ya se cargan, el motor no los evalúa hasta v0.2).
 - Cupo de créditos y PAPA (v0.2).
 - Lista de verificación de requisitos de grado no académicos: inglés B1, Saber Pro, paz y salvo (v0.2).
 - Homologaciones, convalidaciones y validaciones (fuera de alcance del proyecto).
@@ -159,11 +162,11 @@ Los requisitos se priorizan con el criterio MoSCoW (Must / Should / Could). El n
 | RF-15 | Advertencia no bloqueante de materias "en curso" registradas en periodos antiguos. | Should | v0.1 |
 | RF-16 | Exportar/visualizar la ruta por semestre (JSON y texto legible). | Should | v0.1 |
 | RF-17 | Pregunta corta posterior a la matrícula: "¿esto cambió lo que ibas a inscribir?". | Could | v0.1 |
-| RF-18 | Mostrar créditos por componente y por agrupación, y validar el avance porcentual. | Must | v0.2 |
+| RF-18 | Mostrar créditos por componente y por agrupación, y validar el avance porcentual. | Must | v0.1 (avance por componente en UI); agrupaciones y validación porcentual: v0.2 |
 | RF-19 | Mostrar el cupo de créditos restante y cuánto gasta cada decisión. | Must | v0.2 |
 | RF-20 | Registrar notas y avisar si el PAPA se acerca al mínimo de 3.0. | Should | v0.2 |
 | RF-21 | Lista de verificación de requisitos de grado no académicos (inglés B1, Saber Pro, paz y salvo). | Must | v0.2 |
-| RF-22 | Optativas de tecnologías: mínimo 22 créditos, con excedente que cuenta como libre elección. | Must | v0.2 |
+| RF-22 | Optativas de tecnologías: mínimo 22 créditos, con excedente que cuenta como libre elección. | Must | v0.1 |
 | RF-23 | Comparar escenarios lado a lado: semestres, créditos y cupo. | Should | v0.3 |
 | RF-24 | Ruta mínima verificada (modo exacto, con límite de tiempo). | Could | v1.0 |
 | RF-25 | Elegir la versión del plan o cohorte. | Should | v0.1 (condicional) |
@@ -202,7 +205,7 @@ Basadas en el Estatuto Estudiantil (Acuerdo 008 de 2008), la política de lengua
 | RN-07 | Se exige nivel B1 de inglés como requisito de grado. | v0.2 (checklist) |
 | RN-08 | Algunas materias piden un porcentaje de avance de un componente además de prerrequisitos (Seminarios 1, 2 y 3). | v0.2 |
 | RN-09 | El trabajo de grado exige el 100% de fundamentación y el 80% del componente disciplinar o profesional. | v0.2 |
-| RN-10 | Las optativas de tecnologías exigen un mínimo de 22 créditos; el excedente cuenta como libre elección. | v0.2 |
+| RN-10 | Las optativas de tecnologías exigen un mínimo de 22 créditos; el excedente cuenta como libre elección. | v0.1 |
 
 ### 8.1 Cadena de los Seminarios (plan de Sistemas)
 
@@ -281,7 +284,7 @@ Todos los requisitos son condiciones **AND**: deben cumplirse todas.
 | UC-10 | Ver ruta por semestre y exportarla | Estudiante | RF-16 | v0.1 |
 | UC-11 | Ver advertencias | Estudiante | RF-14, RF-15 | v0.1 |
 | UC-12 | Responder pregunta posterior a la matrícula | Estudiante | RF-17 | v0.1 |
-| UC-13 | Consultar avance por componente, cupo y requisitos de grado | Estudiante | RF-18, RF-19, RF-21 | v0.2 |
+| UC-13 | Consultar avance por componente, cupo y requisitos de grado | Estudiante | RF-18, RF-19, RF-21 | v0.1 (avance por componente); cupo y checklist: v0.2 |
 | UC-14 | Registrar notas y aviso de PAPA | Estudiante | RF-20 | v0.2 |
 | UC-15 | Comparar escenarios | Estudiante | RF-23 | v0.3 |
 | UC-16 | Verificar ruta más corta (modo exacto) | Estudiante | RF-24 | v1.0 |
@@ -416,7 +419,7 @@ UI (React) → App (hooks/casos de uso) → Dominio (TS puro) → Datos (JSON + 
 ### 11.3 Contrato del Web Worker
 
 - **Entrada**: `{ pensum, historial, filtros, perfil, config }`.
-- **Salida**: `{ ruta, proximas, cuellos, advertencias, errores }`.
+- **Salida**: `{ ruta, proximas, cuellos, advertencias, avance, errores }` (la ruta incluye `avance` por componente).
 - El worker no accede a la red ni al DOM.
 
 ### 11.4 Flujo de datos
@@ -430,7 +433,7 @@ Estudiante
                               Web Worker: DP Planner
                                      │
                                      ▼
-                    Ruta + Próximas + Razones + Cuellos
+                    Ruta + Próximas + Razones + Cuellos + Avance
                                      │
                                      ▼
                            Estado React (Zustand)
@@ -450,6 +453,7 @@ Estudiante
 | `HistoryEditor` | UI | Editar el historial manualmente. | RF-03 |
 | `FilterPanel` | UI | Créditos mín/máx, prioridad, semestre objetivo, filtros por materia. | RF-04, RF-10, RF-11, RF-12, RF-13 |
 | `NextCoursesList` | UI | Vista principal: chips de próximas materias con razón. | RF-09 |
+| `ProgressPanel` | UI | Avance por componente (tipología): aprobados, inscritos, excedentes. | RF-18 (parcial), RF-22 |
 | `SemesterPlanView` | UI | Ruta por semestre y exportación. | RF-16 |
 | `BottleneckAlert` | UI | Top de cuellos de botella y costo de evitarlos. | RF-08 |
 | `ConflictToast` | UI | Explicar conflictos sin bloquear. | RNF-04 |
@@ -458,6 +462,7 @@ Estudiante
 | `useHistoryImport` | App | Parsear el texto del SIA. | RF-02 |
 | `useStorage` | App | CRUD en localStorage con versionado de esquema. | RF-03, RNF-05, RNF-06 |
 | `DPPlanner` | Dominio | Construir la ruta sugerida. | RF-05, RF-07, RF-09 |
+| `cupos.ts` | Dominio | Avance por componente, cupos cumplidos y excedentes. | RF-18 (parcial), RF-22, RN-10 |
 | `TopologicalSort` | Dominio | Calcular niveles y validar ausencia de ciclos. | RF-06, RNF-07 |
 | `BottleneckDetector` | Dominio | Ruta crítica y cuellos de botella. | RF-08 |
 | `ExplanationGenerator` | Dominio | Generar razones legibles. | RNF-04 |
@@ -531,7 +536,7 @@ interface HistorialItem {
   estado: EstadoMateria;
   periodo?: string;                     // "2026-1S"
   nota?: number;                        // v0.2
-  creditos_inscritos?: number;          // v0.2
+  creditos_inscritos?: number;          // usado en v0.1 por los cupos (códigos fuera del pensum)
   cancelada_antes_segunda_semana?: boolean; // v0.2
 }
 
@@ -553,7 +558,20 @@ interface RutaCompleta {
   proximas_materias: MateriaPlanificada[];
   cuellos_botella: CuelloBotella[];
   advertencias: Advertencia[];
+  avance: AvanceComponente[];           // avance actual por componente (tipología)
   llega_a_objetivo?: boolean;
+  bloqueo?: BloqueoInfo | null;
+}
+
+interface AvanceComponente {
+  componente: ComponenteId;
+  nombre: string;                       // "Disciplinar Optativa", "Libre Elección", ...
+  creditos_exigidos: number;
+  creditos_obligatorios: number;
+  creditos_aprobados: number;           // en libre elección incluye fuera del pensum y excedentes
+  creditos_inscritos: number;           // materias "en curso"
+  excedente: number;                    // aprobado de más → cuenta como libre elección
+  cumple: boolean;
 }
 
 interface SemestrePlan {
@@ -589,7 +607,9 @@ type Advertencia =
   | { tipo: 'creditos_minimos_unal'; mensaje: string; valor: number }
   | { tipo: 'en_curso_antiguo'; codigos: string[] }
   | { tipo: 'cupo_proyectado_v02'; mensaje: string }
-  | { tipo: 'papa_proyectado_v02'; mensaje: string };
+  | { tipo: 'papa_proyectado_v02'; mensaje: string }
+  | { tipo: 'cupos_incompletos'; detalles: string[] }
+  | { tipo: 'libre_eleccion_pendiente'; mensaje: string };
 ```
 
 ### 13.2 Estado efectivo de una asignatura
@@ -599,7 +619,7 @@ El historial puede tener varias entradas para la misma asignatura (por ejemplo, 
 | Si en el historial hay… | Estado efectivo | ¿Habilitada? |
 |---|---|---|
 | Alguna entrada `aprobada` | Aprobada | No |
-| Alguna entrada `en_curso` (y ninguna aprobada) | En curso | No este semestre |
+| Alguna entrada `en_curso` (y ninguna aprobada) | En curso | No este semestre; cuenta como **inscritos** del cupo de su componente |
 | Solo entradas `perdida` y/o `cancelada` | Pendiente (reprobada) | Sí, si cumple prerrequisitos |
 | Ninguna entrada | No vista | Sí, si cumple prerrequisitos |
 
@@ -816,7 +836,8 @@ Una asignatura está **habilitada** cuando:
 2. Su estado efectivo no es `en_curso`.
 3. Todas las condiciones de todos sus requisitos están cumplidas *(v0.1: solo prerrequisitos de materia)*.
 4. No está bloqueada por un filtro "evitar" activo para el semestre que se calcula.
-5. *(v0.2)* Hay cupo de créditos suficiente.
+5. Si es **no obligatoria**, el cupo de su componente sigue pendiente: `aprobados + inscritos + planificados < exigidos` (RF-22). Las obligatorias siempre entran.
+6. *(v0.2)* Hay cupo de créditos suficiente (RN-03, distinto del cupo por componente).
 
 ### 16.3 Ruta sugerida (modo normal) — DP Planner
 
@@ -827,33 +848,49 @@ ENTRADA: pensum, historial, filtros, perfil, config{ max_semestres = 15 }
 SALIDA: RutaCompleta
 
 1. estadoEfectivo ← calcularEstadoEfectivo(historial)
-2. habilitadasBase ← calcularHabilitadas(pensum, estadoEfectivo)
-3. semestre ← 1
-4. MIENTRAS semestre ≤ max_semestres:
-     a. habilitadas ← aplicarFiltros(habilitadasBase, filtros, semestre)
-     b. siSi ← filtros 'si_o_si' con semestre_aplica = semestre
-     c. ordenadas ← ordenarPorPrioridad(habilitadas, pensum, perfil.prioridad, estadoEfectivo)
-     d. (seleccionadas, creditos) ← seleccionarSemestre(ordenadas,
-            perfil.creditos_maximos ?? 20, perfil.creditos_minimos ?? 0, pensum, siSi)
-     e. SI seleccionadas está vacío Y quedanPendientes(estadoEfectivo): ROMPER (stuck)
-     f. agregar SemestrePlan(semestre, seleccionadas, razones)
-     g. para cada código en seleccionadas: estadoEfectivo[código] ← 'aprobada'
-     h. habilitadasBase ← calcularHabilitadas(pensum, estadoEfectivo)
-     i. SI no quedan materias pendientes: ROMPER
-     j. semestre ← semestre + 1
-5. cuellos ← detectarCuellosBotella(pensum, estadoInicial)
-6. advertencias ← generarAdvertencias(perfil, semestres[0].total_creditos)
-7. próximas ← semestres[0].materias
-8. DEVOLVER RutaCompleta
+2. avance ← calcularAvance(pensum, historial)        // cupos por componente (cupos.ts)
+3. planificados ← {}                                 // créditos ya agendados por componente
+4. habilitadasBase ← calcularHabilitadas(pensum, estadoEfectivo)
+5. semestre ← 1
+6. MIENTRAS semestre ≤ max_semestres:
+     a. filtradas ← aplicarFiltros(habilitadasBase, filtros, semestre)
+     b. habilitadas ← filtradas ∩ (obligatoria ∪ cupoPendiente(agrupación))
+     c. siSi ← filtros 'si_o_si' con semestre_aplica = semestre
+        // los "sí o sí" del usuario se agendan siempre, saltándose el filtro de cupo
+     d. ordenadas ← ordenarPorPrioridad(habilitadas, ..., prioridad)   // obligatorias primero
+     e. (seleccionadas, creditos) ← seleccionarSemestre(ordenadas, cap, siSi)
+     f. SI seleccionadas está vacío: ROMPER (stuck)
+     g. agregar SemestrePlan(semestre, seleccionadas, razones)
+     h. para cada código en seleccionadas:
+          estadoEfectivo[código] ← 'aprobada'
+          planificados[agrupación] += créditos
+     i. habilitadasBase ← calcularHabilitadas(pensum, estadoEfectivo)
+     j. SI todas las obligatorias están aprobadas Y todos los cupos de
+        componentes (excepto libre elección) están cubiertos: ROMPER
+     k. semestre ← semestre + 1
+7. bloqueo ← solo si quedan obligatorias sin aprobar (las ópticas de cupo
+   cumplido y la libre elección pendiente no generan bloqueo)
+8. cuellos ← detectarCuellosBotella(..., necesarias)  // ver §16.6
+9. advertencias ← generarAdvertencias(... incluye cupos_incompletos y
+   libre_eleccion_pendiente)
+10. próximas ← semestres[0].materias
+11. DEVOLVER RutaCompleta{ ..., avance }
 ```
+
+**Notas:**
+- La **libre elección** no se agenda desde el motor: sus créditos llegan con códigos fuera del pensum o con excedentes de otros componentes; si queda pendiente se reporta como advertencia.
+- El motor no recomienda materias `en_curso` (ya cubiertas este periodo).
+- Los "sí o sí" del usuario tienen prioridad absoluta dentro del cupo del semestre.
 
 ### 16.4 Prioridades y su efecto en el orden
 
 | Prioridad | Criterio de orden | Efecto |
 |---|---|---|
-| **Terminar rápido** | Ruta crítica descendente; desempate por número de dependientes directos. | Prioriza materias que desbloquean más. |
-| **Cuidar el promedio** | Créditos ascendentes (heurística: menos créditos = más foco por materia). | Aproximación explícita, documentada como tal. |
+| **Terminar rápido** | Obligatorias primero; luego ruta crítica descendente; desempate por dependientes directos. | Prioriza materias que desbloquean más. |
+| **Cuidar el promedio** | Obligatorias primero; luego créditos ascendentes (heurística: menos créditos = más foco por materia). | Aproximación explícita, documentada como tal. |
 | **Carga cómoda** | Igual que "cuidar el promedio", pero el selector llena ~70% del máximo de créditos. | Equilibrio sobre velocidad. |
+
+> En todas las prioridades, **las obligatorias del plan van primero** para que Trabajo de Grado y Proyecto Integrado no pierdan los créditos del semestre frente a optativas (corrección de v0.1).
 
 > La prioridad "cuidar el promedio" no usa una métrica real de dificultad. En v0.1 se aproxima con el número de créditos. Una métrica real (datos históricos o percepción del estudiante) es una decisión pendiente.
 
@@ -865,8 +902,10 @@ SALIDA: RutaCompleta
 
 ### 16.6 Detección de cuellos de botella
 
+Solo se consideran **materias necesarias para graduarse**: las obligatorias y las no obligatorias cuyo componente tiene cupo pendiente, más todos sus prerrequisitos (ancestros). Una optativa de un cupo ya cumplido **no** es cuello de botella.
+
 ```
-FUNCIÓN detectarCuellosBotella(pensum, estado):
+FUNCIÓN detectarCuellosBotella(pensum, estado, necesarias):
   memo ← {}
   FUNCIÓN longitudCadena(codigo):
     SI codigo ∈ memo: DEVOLVER memo[codigo]
@@ -875,10 +914,13 @@ FUNCIÓN detectarCuellosBotella(pensum, estado):
     resultado ← 1 + max(longitudCadena(d) para d en dependientes)
     memo[codigo] ← resultado
     DEVOLVER resultado
-  resultados ← [ {código, cadena_longitud: longitudCadena(código)} para cada materia no aprobada ]
+  resultados ← [ {código, cadena_longitud: longitudCadena(código)}
+                  para cada materia no aprobada que ∈ necesarias ]
   ORDENAR resultados por cadena_longitud descendente
   DEVOLVER los primeros N como cuellos (costo_si_evita ≈ cadena_longitud)
 ```
+
+**Cálculo de `necesarias`** (en `dp-planner.ts`): `{ obligatorias } ∪ { no obligatorias con cupo de su componente pendiente }` cerrado bajo prerrequisitos (ancestros).
 
 ### 16.7 Reglas de explicación (RNF-04)
 
@@ -891,6 +933,9 @@ FUNCIÓN detectarCuellosBotella(pensum, estado):
 | Conflicto "sí o sí" vs. prerrequisito | "Marcaste X como sí o sí, pero te falta Y." |
 | Conflicto "sí o sí" vs. créditos máximos | "X no cabe con los créditos máximos; desplazaría a Z." |
 | Conflicto "evitar" vs. cuello de botella | "Evitar X este semestre retrasa la graduación N semestres." |
+| Optativa de cupo pendiente | "Cuenta para Disciplinar Optativa — te faltan N cr (incluye inscritos)." |
+| Libre elección pendiente (advertencia) | "Faltan N cr de libre elección. Consíguelos con materias fuera del pensum o con excedentes de otros bloques." |
+| Cupo de componente sin cubrir (advertencia) | "Nombre: faltan N cr (aprobados + inscritos + planificados)." |
 | Cupo insuficiente (v0.2) | "No te alcanza el cupo para X; te quedan N créditos." |
 
 ### 16.8 Ruta mínima verificada (modo exacto, v1.0)
@@ -992,9 +1037,10 @@ La interfaz es un **recomendador por filtros**, no un visor de grafos. El estudi
 | **3. Perfil y filtros** | Créditos mín/máx, prioridad, semestre objetivo, filtros por materia. |
 | **4. Próximas materias** (principal) | Chips con razón; colores: disponible, sí-o-sí, evitar, cuello de botella. |
 | **5. Ruta por semestre** | Acordeón de semestres con totales; exportar JSON/texto. |
-| **6. Cuellos de botella** | Top de cuellos y costo de evitarlos. |
-| **7. Advertencias** | Mínimo de créditos UNAL, "en curso" antiguas. |
-| **8. Configuración avanzada** | Timeout del modo exacto (v1.0). |
+| **6. Cuellos de botella** | Top de cuellos y costo de evitarlos (solo materias necesarias). |
+| **7. Avance por tipología** | `ProgressPanel`: aprobados/exigidos por componente, inscritos y excedentes (RF-22). |
+| **8. Advertencias** | Mínimo de créditos UNAL, "en curso" antiguas, cupos incompletos, libre elección pendiente. |
+| **9. Configuración avanzada** | Timeout del modo exacto (v1.0). |
 
 ### 19.3 Flujo de usuario objetivo
 
@@ -1090,7 +1136,8 @@ La interfaz es un **recomendador por filtros**, no un visor de grafos. El estudi
 
 ### 25.1 Estrategia
 
-- **Unitarias (Vitest)**: dominio puro — `TopologicalSort`, `DPPlanner`, `BottleneckDetector`, `ExplanationGenerator`, parser del SIA.
+- **Unitarias (Vitest)**: dominio puro — `TopologicalSort`, `DPPlanner`, `BottleneckDetector`, `ExplanationGenerator`, `cupos` (avance por componente), parser del SIA.
+- **Fixture real**: `tests/fixtures/historial-sia-real.ts` con el historial SIA de un estudiante real (43 asignaturas, duplicados incluidos) para validar recomendaciones y avance contra datos reales.
 - **Integración**: hooks y flujo "cambiar filtro → recalcular".
 - **Extremo a extremo (Playwright, opcional)**: importar historial → ver próximas → filtrar → simular → exportar.
 
@@ -1106,13 +1153,17 @@ La interfaz es un **recomendador por filtros**, no un visor de grafos. El estudi
 | TC-06 | "Sí o sí" con conflicto | "Sí o sí" `3007847` sin `3007741` | Conflicto: "Te falta Estructura de Datos". |
 | TC-07 | Objetivo agresivo | Perder `3010435`, objetivo 10 semestres | Indicador: "No llega a semestre 10 (ruta actual: 13)". |
 | TC-08 | Importar historial del SIA | Texto real copiado del portal | Parser reconoce ≥55 materias; vista previa editable; confirma e importa. |
+| TC-09 | Historial real con cupos cubiertos (fixture `tests/fixtures/historial-sia-real.ts`) | 43 asignaturas reales; fundamentación 46/43 | `3006829` Química, `1000017-M` Física Eléctrica y `1000006-M` Cálculo en Varias Variables **no** aparecen en ninguna recomendación ni en los cuellos; ruta corta sin bloqueo. |
+| TC-10 | Duplicados del SIA | `1000005-M` y `3010435` con perdida + aprobada | Estado efectivo `aprobada` en ambos; no se recomiendan. |
+| TC-11 | Materias inscritas (en curso) | Marcar `3010425` como `en curso` | No se recomienda; suma como inscrita al cupo de Disciplinar Optativa en `ProgressPanel`. |
 
 ### 25.3 Criterios de aceptación de v0.1
 
 - Cero errores de prerrequisitos en lo recomendado (RNF-07).
 - La ruta sugerida se calcula en menos de 2 segundos (RNF-01).
 - Un estudiante completa el flujo sin ayuda (RNF-02), también en móvil (RNF-08).
-- Los 8 casos de prueba pasan.
+- Los 11 casos de prueba pasan; TC-09 a TC-11 están automatizados con el fixture real (suite: `npm test`).
+- `npm run build` (incluye typecheck real con `tsc -p tsconfig.app.json`) termina sin errores.
 
 ---
 
@@ -1120,8 +1171,8 @@ La interfaz es un **recomendador por filtros**, no un visor de grafos. El estudi
 
 | Versión | Alcance | Resultado |
 |---|---|---|
-| **v0.1** (~4–6 semanas) | Prerrequisitos, créditos/semestre, filtros, prioridad, simulación de pérdida, cuellos de botella, importación del SIA. | MVP usable, desplegado y validado con 3 estudiantes. |
-| **v0.2** | Componentes, porcentajes de avance, cupo, PAPA, checklist de grado, optativas 22+excedente. | Modelo completo de graduación. |
+| **v0.1** (~4–6 semanas) | Prerrequisitos, créditos/semestre, filtros, prioridad, simulación de pérdida, cuellos de botella, importación del SIA, cupos por componente con avance en UI (RF-22/RN-10). | MVP usable, desplegado y validado con 3 estudiantes. |
+| **v0.2** | Porcentajes de avance (Seminarios/TG), cupo de créditos, PAPA, checklist de grado. | Modelo completo de graduación. |
 | **v0.3** | Comparación de escenarios lado a lado. | Diferenciador de producto. |
 | **v1.0** | Modo exacto con A* (timeout 3 s en configuración avanzada). | Historia de portafolio: doble algoritmo comparado. |
 | **Etapa 2** | Horarios: oferta, grupos, preferencias, cruces. | Producto completo. |
@@ -1135,7 +1186,8 @@ La interfaz es un **recomendador por filtros**, no un visor de grafos. El estudi
 5. **Parser del SIA** + `useStorage` + `useRecommendation`.
 6. **Componentes de interfaz** (`HistoryImport`, `FilterPanel`, `NextCoursesList`, `SemesterPlanView`, `BottleneckAlert`, `ConflictToast`, `AdvancedSettings`).
 7. **Integración** en `App.tsx`, Web Worker, manejo de errores, responsive.
-8. **Deploy** en GitHub Pages + README + caso de estudio.
+8. **Cupos por componente**: `cupos.ts`, filtrado de recomendaciones, orden obligatorias-primero, cuellos acotados a materias necesarias, `ProgressPanel`, fixture real (`historial-sia-real.ts`) — corrección tras validar con historial real.
+9. **Deploy** en GitHub Pages + README + caso de estudio.
 
 ---
 
@@ -1151,6 +1203,8 @@ Problema → Objetivo → Requisito → Decisión → Componente → Persistenci
 | Historial difícil de ingresar | Partir de la situación real | RF-02, RF-03 | DA-08 | `HistoryImport`, `useHistoryImport` | localStorage | §10.2 |
 | No ver el costo de las decisiones | Mostrar costo en semestres | RF-07 | DA-02 | `DPPlanner` (simulación) | Derivada | §10.4 |
 | Materias que atrasan la carrera | Detectar cuellos de botella | RF-08 | DA-02 | `BottleneckDetector` | Derivada | §16.6 |
+| Recomendar materias con cupo ya cubierto | Respetar cupos por tipología | RF-22, RN-10 | DA-02 | `cupos.ts`, `DPPlanner` | Derivada | §16.3 |
+| No saber en qué tipología voy | Mostrar avance por componente | RF-18 (parcial), RF-22 | DA-07 | `ProgressPanel` | Derivada | §19.2 |
 | Datos del pensum dispersos | Tener una fuente de verdad | RF-01 | DA-05, DA-06 | Pensum JSON | JSON en repositorio | §18 |
 
 ---
