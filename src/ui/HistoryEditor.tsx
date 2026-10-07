@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { memo, useMemo, useState } from 'react'
 import { Search, CheckCircle, XCircle, MinusCircle } from 'lucide-react'
 import type { Pensum, Asignatura, EstadoEfectivo, EstadoMateria } from '../core/pensum/types'
 
@@ -8,36 +8,48 @@ interface HistoryEditorProps {
   onChange: (codigo: string, estado: EstadoMateria) => void
 }
 
-export function HistoryEditor({ pensum, historial, onChange }: HistoryEditorProps) {
+/** Nombre legible por agrupación (dato estático: izado fuera del componente). */
+const COMPONENT_NAMES: Record<string, string> = {
+  fundamentacion: 'Fundamentación',
+  ciencias_computacion: 'Ciencias de la Computación',
+  ingenieria_software: 'Ingeniería de Software',
+  sistemas: 'Sistemas',
+  proyectos_ingenieria: 'Proyectos en Ingeniería',
+  optativas_tecnologicas: 'Optativas de Tecnologías',
+  trabajo_grado: 'Trabajo de Grado',
+  libre_eleccion: 'Libre Elección',
+}
+
+const ORDENAR_POR_NOMBRE = (a: Asignatura, b: Asignatura) =>
+  a.nombre.localeCompare(b.nombre)
+
+export const HistoryEditor = memo(function HistoryEditor({ pensum, historial, onChange }: HistoryEditorProps) {
   const [filtroTexto, setFiltroTexto] = useState('')
 
-  const asignaturas = [...pensum.asignaturas].sort((a, b) =>
-    a.nombre.localeCompare(b.nombre)
+  // Memo: la lista ordenada solo se reordena si cambia el pensum.
+  const asignaturas = useMemo(
+    () => [...pensum.asignaturas].sort(ORDENAR_POR_NOMBRE),
+    [pensum],
   )
 
-  const filtradas = asignaturas.filter(
-    (a) =>
-      a.nombre.toLowerCase().includes(filtroTexto.toLowerCase()) ||
-      a.codigo.toLowerCase().includes(filtroTexto.toLowerCase())
-  )
-
-  const grouped = filtradas.reduce((acc, a) => {
-    const key = a.agrupacion
-    if (!acc[key]) acc[key] = []
-    acc[key].push(a)
-    return acc
-  }, {} as Record<string, Asignatura[]>)
-
-  const componentNames: Record<string, string> = {
-    fundamentacion: 'Fundamentación',
-    ciencias_computacion: 'Ciencias de la Computación',
-    ingenieria_software: 'Ingeniería de Software',
-    sistemas: 'Sistemas',
-    proyectos_ingenieria: 'Proyectos en Ingeniería',
-    optativas_tecnologicas: 'Optativas de Tecnologías',
-    trabajo_grado: 'Trabajo de Grado',
-    libre_eleccion: 'Libre Elección',
-  }
+  // Derivación memoizada: filtrar + agrupar, con el texto ya en minúsculas
+  // una sola vez por cambio (no por materia).
+  const grouped = useMemo(() => {
+    const busqueda = filtroTexto.toLowerCase()
+    const filtradas = busqueda
+      ? asignaturas.filter(
+          (a) =>
+            a.nombre.toLowerCase().includes(busqueda) ||
+            a.codigo.toLowerCase().includes(busqueda),
+        )
+      : asignaturas
+    return filtradas.reduce((acc, a) => {
+      const key = a.agrupacion
+      if (!acc[key]) acc[key] = []
+      acc[key].push(a)
+      return acc
+    }, {} as Record<string, Asignatura[]>)
+  }, [asignaturas, filtroTexto])
 
   const estadoActual = (codigo: string) => historial[codigo] ?? 'no_vista'
 
@@ -80,7 +92,7 @@ export function HistoryEditor({ pensum, historial, onChange }: HistoryEditorProp
         {Object.entries(grouped).map(([comp, items]) => (
           <details key={comp} className="group">
             <summary className="flex items-center justify-between p-2 bg-gray-50 rounded-lg cursor-pointer">
-              <span className="font-medium text-gray-700">{componentNames[comp] ?? comp}</span>
+              <span className="font-medium text-gray-700">{COMPONENT_NAMES[comp] ?? comp}</span>
               <span className="text-sm text-gray-500">{items.length} materias</span>
             </summary>
             <div className="mt-2 space-y-1 pl-4 border-l border-gray-200">
@@ -112,4 +124,4 @@ export function HistoryEditor({ pensum, historial, onChange }: HistoryEditorProp
       </p>
     </div>
   )
-}
+})

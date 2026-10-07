@@ -1,22 +1,11 @@
-import { useState, useEffect } from 'react'
-
 interface ConflictToastProps {
   conflict: { mensaje: string; tipo: 'error' | 'warning' } | null
   onDismiss: () => void
 }
 
 export function ConflictToast({ conflict, onDismiss }: ConflictToastProps) {
-  const [visible, setVisible] = useState(false)
-
-  useEffect(() => {
-    if (conflict) {
-      setVisible(true)
-    } else {
-      setVisible(false)
-    }
-  }, [conflict])
-
-  if (!visible || !conflict) return null
+  // Estado derivado en render (sin useState/useEffect): conflict decide todo.
+  if (!conflict) return null
 
   return (
     <div className="fixed bottom-4 right-4 z-50 animate-slide-up">

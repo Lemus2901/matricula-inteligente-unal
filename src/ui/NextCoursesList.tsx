@@ -1,3 +1,4 @@
+import { memo, useMemo } from 'react'
 import { Zap, AlertTriangle, CheckCircle, AlertCircle, Target } from 'lucide-react'
 import type { MateriaPlanificada, CuelloBotella } from '../core/pensum/types'
 
@@ -10,7 +11,50 @@ interface NextCoursesListProps {
   onToggleFiltro: (codigo: string, tipo: 'evitar' | 'si_o_si') => void
 }
 
-export function NextCoursesList({ proximas, filtros, cuellos, advertencias, onSimularPerdida, onToggleFiltro }: NextCoursesListProps) {
+// Helpers puros (sin cierre sobre el componente): izados a nivel de módulo
+// para no recrearlos ni recrear sus mapas en cada render/chip.
+const RAZON_TEXTO: Record<string, string> = {
+  cuello_botella: 'Cuello de botella',
+  filtro_si_o_si: 'Forzado (sí o sí)',
+  desbloquea_otras: 'Desbloquea otras materias',
+  relleno_creditos: 'Relleno de créditos',
+  obligatoria_plan: 'Obligatoria por plan',
+  prerrequisito_cumplido: 'Prerrequisitos cumplidos',
+  optativa_tecnologica: 'Optativa de tecnologías',
+  libre_eleccion: 'Libre elección',
+}
+
+const getRazonTexto = (razon: string) => RAZON_TEXTO[razon] ?? razon
+
+const getRazonIcon = (razon: string) => {
+  switch (razon) {
+    case 'cuello_botella': return <span title="Cuello de botella"><Zap className="w-4 h-4 text-orange-500" /></span>
+    case 'filtro_si_o_si': return <span title="Forzado (sí o sí)"><CheckCircle className="w-4 h-4 text-green-500" /></span>
+    case 'desbloquea_otras': return <span title="Desbloquea otras materias"><Target className="w-4 h-4 text-blue-500" /></span>
+    case 'obligatoria_plan': return <span title="Obligatoria por plan"><CheckCircle className="w-4 h-4 text-gray-500" /></span>
+    case 'prerrequisito_cumplido': return <span title="Prerrequisitos cumplidos"><CheckCircle className="w-4 h-4 text-gray-400" /></span>
+    case 'optativa_tecnologica': return <span className="text-purple-500">◆</span>
+    case 'libre_eleccion': return <span className="text-gray-400">◈</span>
+    default: return null
+  }
+}
+
+export const NextCoursesList = memo(function NextCoursesList({ proximas, filtros, cuellos, advertencias, onSimularPerdida, onToggleFiltro }: NextCoursesListProps) {
+  // Búsquedas O(1) por chip: Sets memoizados en vez de .some() repetidos.
+  // (Siempre se evalúan, antes de cualquier return: reglas de hooks.)
+  const codigosEvitar = useMemo(
+    () => new Set(filtros.filter((f) => f.tipo === 'evitar').map((f) => f.codigo)),
+    [filtros],
+  )
+  const codigosSiSi = useMemo(
+    () => new Set(filtros.filter((f) => f.tipo === 'si_o_si').map((f) => f.codigo)),
+    [filtros],
+  )
+  const codigosCuello = useMemo(() => new Set(cuellos.map((c) => c.codigo)), [cuellos])
+
+  const isEvitar = (codigo: string) => codigosEvitar.has(codigo)
+  const isSiSi = (codigo: string) => codigosSiSi.has(codigo)
+
   if (!proximas || proximas.length === 0) {
     return (
       <div className="bg-white p-8 rounded-lg border border-gray-200 text-center">
@@ -22,40 +66,10 @@ export function NextCoursesList({ proximas, filtros, cuellos, advertencias, onSi
     )
   }
 
-  const getRazonIcon = (razon: string) => {
-    switch (razon) {
-      case 'cuello_botella': return <span title="Cuello de botella"><Zap className="w-4 h-4 text-orange-500" /></span>
-      case 'filtro_si_o_si': return <span title="Forzado (sí o sí)"><CheckCircle className="w-4 h-4 text-green-500" /></span>
-      case 'desbloquea_otras': return <span title="Desbloquea otras materias"><Target className="w-4 h-4 text-blue-500" /></span>
-      case 'obligatoria_plan': return <span title="Obligatoria por plan"><CheckCircle className="w-4 h-4 text-gray-500" /></span>
-      case 'prerrequisito_cumplido': return <span title="Prerrequisitos cumplidos"><CheckCircle className="w-4 h-4 text-gray-400" /></span>
-      case 'optativa_tecnologica': return <span className="text-purple-500">◆</span>
-      case 'libre_eleccion': return <span className="text-gray-400">◈</span>
-      default: return null
-    }
-  }
-
-  const getRazonTexto = (razon: string) => {
-    const map: Record<string, string> = {
-      cuello_botella: 'Cuello de botella',
-      filtro_si_o_si: 'Forzado (sí o sí)',
-      desbloquea_otras: 'Desbloquea otras materias',
-      relleno_creditos: 'Relleno de créditos',
-      obligatoria_plan: 'Obligatoria por plan',
-      prerrequisito_cumplido: 'Prerrequisitos cumplidos',
-      optativa_tecnologica: 'Optativa de tecnologías',
-      libre_eleccion: 'Libre elección',
-    }
-    return map[razon] ?? razon
-  }
-
-  const isEvitar = (codigo: string) => filtros.some(f => f.tipo === 'evitar' && f.codigo === codigo)
-  const isSiSi = (codigo: string) => filtros.some(f => f.tipo === 'si_o_si' && f.codigo === codigo)
-
   const renderMateria = (m: MateriaPlanificada, idx: number) => {
     const esEvitar = isEvitar(m.codigo)
     const esSiSi = isSiSi(m.codigo)
-    const esCuello = cuellos.some(c => c.codigo === m.codigo)
+    const esCuello = codigosCuello.has(m.codigo)
 
     return (
       <div
@@ -151,4 +165,4 @@ export function NextCoursesList({ proximas, filtros, cuellos, advertencias, onSi
       </div>
     </div>
   )
-}
+})

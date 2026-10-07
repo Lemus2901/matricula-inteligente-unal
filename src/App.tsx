@@ -1,8 +1,8 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useMemo, useState, useCallback } from 'react'
 import { AlertTriangle, Download, Trash2 } from 'lucide-react'
 import { usePlannerStore } from './store/usePlannerStore'
 import { calcularEstadoEfectivo } from './core/algorithm/estado'
-import type { EstadoEfectivo, FilaResumenSIA, HistorialItem } from './core/pensum/types'
+import type { EstadoEfectivo, EstadoMateria, FilaResumenSIA, HistorialItem } from './core/pensum/types'
 import { PensumSelector } from './ui/PensumSelector'
 import { HistoryImport } from './ui/HistoryImport'
 import { HistoryEditor } from './ui/HistoryEditor'
@@ -13,6 +13,22 @@ import { SemesterPlanView } from './ui/SemesterPlanView'
 import { BottleneckAlert } from './ui/BottleneckAlert'
 import { ConflictToast } from './ui/ConflictToast'
 import { AdvancedSettings } from './ui/AdvancedSettings'
+
+/** Array vacío estable para no crear instancias nuevas en cada render
+ *  (los hijos van memoizados: props idénticas → sin re-render). */
+const VACIO: never[] = []
+const noop = () => {}
+
+/** Logo + título del header: JSX estático, izado fuera del componente. */
+const LOGO_HEADER = (
+  <div className="flex items-center gap-3">
+    <svg className="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>
+    <div>
+      <h1 className="text-xl font-bold text-gray-900">Matrícula Inteligente UNAL</h1>
+      <p className="text-xs text-gray-500">Facultad de Minas · Ingeniería de Sistemas</p>
+    </div>
+  </div>
+)
 
 export function App() {
   const {
@@ -121,10 +137,31 @@ export function App() {
     }
   }
 
-  // Estado efectivo por código para HistoryEditor (resuelve duplicados: aprobada gana)
-  const historialMap: Record<string, EstadoEfectivo> = Object.fromEntries(
-    calcularEstadoEfectivo(historial),
+  // Estado efectivo por código para HistoryEditor (resuelve duplicados: aprobada gana).
+  // Memoizado: solo se recalcula cuando cambia el historial, no en cada render.
+  const historialMap: Record<string, EstadoEfectivo> = useMemo(
+    () => Object.fromEntries(calcularEstadoEfectivo(historial)),
+    [historial],
   )
+
+  // Handlers estables (callbacks de React.memo en los hijos).
+  const handleHistoryChange = useCallback((codigo: string, estado: EstadoMateria) => {
+    const actual = usePlannerStore.getState().historial
+    const idx = actual.findIndex((h) => h.codigo === codigo)
+    if (idx >= 0) {
+      const nuevo = [...actual]
+      nuevo[idx] = { ...nuevo[idx], estado }
+      setHistorial(nuevo)
+    } else {
+      setHistorial([...actual, { codigo, estado, periodo: undefined }])
+    }
+    recalcular()
+  }, [setHistorial, recalcular])
+
+  const dismissConflicto = useCallback(() => setConflicto(null), [])
+  const abrirRuta = useCallback(() => setMostrarRutaCompleta(true), [])
+  const cerrarRuta = useCallback(() => setMostrarRutaCompleta(false), [])
+  const pensums = useMemo(() => (pensum ? [pensum] : []), [pensum])
 
   if (pensumLoading) {
     return (
@@ -164,13 +201,7 @@ export function App() {
       <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <svg className="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>
-              <div>
-                <h1 className="text-xl font-bold text-gray-900">Matrícula Inteligente UNAL</h1>
-                <p className="text-xs text-gray-500">Facultad de Minas · Ingeniería de Sistemas</p>
-              </div>
-            </div>
+            {LOGO_HEADER}
             <div className="flex items-center gap-2">
               <button
                 onClick={handleExportar}
@@ -193,21 +224,17 @@ export function App() {
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-800 flex items-center justify-between">
             <span>{error}</span>
-            <button onClick={() => setConflicto(null)} className="text-red-500 hover:text-red-700">×</button>
+            <button onClick={dismissConflicto} className="text-red-500 hover:text-red-700">×</button>
           </div>
-        )}
-
-        {conflicto && (
-          <ConflictToast conflict={conflicto} onDismiss={() => setConflicto(null)} />
         )}
 
         <div className="grid gap-6 lg:grid-cols-4">
           <aside className="lg:col-span-1 space-y-6">
             <section>
               <PensumSelector
-                pensums={[pensum]}
+                pensums={pensums}
                 selectedPensumId={pensum.pensum_id}
-                onSelect={() => {}}
+                onSelect={noop}
               />
             </section>
 
@@ -218,17 +245,7 @@ export function App() {
                 <HistoryEditor
                   pensum={pensum}
                   historial={historialMap}
-                  onChange={(codigo, estado) => {
-                    const idx = historial.findIndex(h => h.codigo === codigo)
-                    if (idx >= 0) {
-                      const nuevo = [...historial]
-                      nuevo[idx] = { ...nuevo[idx], estado }
-                      setHistorial(nuevo)
-                    } else {
-                      setHistorial([...historial, { codigo, estado, periodo: undefined }])
-                    }
-                    recalcular()
-                  }}
+                  onChange={handleHistoryChange}
                 />
               </div>
             </section>
@@ -262,22 +279,22 @@ export function App() {
             {!recalculando && (
               <>
                 <NextCoursesList
-                  proximas={ruta?.proximas_materias ?? []}
+                  proximas={ruta?.proximas_materias ?? VACIO}
                   filtros={filtros}
-                  cuellos={ruta?.cuellos_botella ?? []}
-                  advertencias={ruta?.advertencias ?? []}
+                  cuellos={ruta?.cuellos_botella ?? VACIO}
+                  advertencias={ruta?.advertencias ?? VACIO}
                   onSimularPerdida={handleSimular}
                   onToggleFiltro={handleToggleFiltro}
                 />
 
-                <ProgressPanel avance={ruta?.avance ?? []} resumenSia={resumenSia} />
+                <ProgressPanel avance={ruta?.avance ?? VACIO} resumenSia={resumenSia} />
 
-                <BottleneckAlert cuellos={ruta?.cuellos_botella ?? []} />
+                <BottleneckAlert cuellos={ruta?.cuellos_botella ?? VACIO} />
 
                 <div className="flex items-center justify-between">
                   <h3 className="font-semibold text-gray-800">Ruta completa por semestres</h3>
                   <button
-                    onClick={() => setMostrarRutaCompleta(true)}
+                    onClick={abrirRuta}
                     className="px-3 py-1.5 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 flex items-center gap-1"
                   >
                     Ver completa ({ruta?.total_semestres ?? 0} semestres)
@@ -292,11 +309,11 @@ export function App() {
       {mostrarRutaCompleta && (
         <SemesterPlanView
           ruta={ruta}
-          onClose={() => setMostrarRutaCompleta(false)}
+          onClose={cerrarRuta}
         />
       )}
 
-      <ConflictToast conflict={conflicto} onDismiss={() => setConflicto(null)} />
+      <ConflictToast conflict={conflicto} onDismiss={dismissConflicto} />
     </div>
   )
 }

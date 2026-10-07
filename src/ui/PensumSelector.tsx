@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import { ChevronDown, CheckCircle, BookOpen } from 'lucide-react'
 import type { Pensum } from '../core/pensum/types'
 
@@ -8,7 +8,7 @@ interface PensumSelectorProps {
   onSelect: (id: string) => void
 }
 
-export function PensumSelector({ pensums, selectedPensumId, onSelect }: PensumSelectorProps) {
+export const PensumSelector = memo(function PensumSelector({ pensums, selectedPensumId, onSelect }: PensumSelectorProps) {
   const [open, setOpen] = useState(false)
 
   if (pensums.length <= 1) {
@@ -74,4 +74,4 @@ export function PensumSelector({ pensums, selectedPensumId, onSelect }: PensumSe
       )}
     </div>
   )
-}
+})

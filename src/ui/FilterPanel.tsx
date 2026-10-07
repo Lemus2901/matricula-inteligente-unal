@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import { PlusCircle, Filter, Target, Trash2, Clock, Zap, Battery } from 'lucide-react'
 
 interface FilterPanelProps {
@@ -9,7 +9,7 @@ interface FilterPanelProps {
   onPerfilChange: (parcial: any) => void
 }
 
-export function FilterPanel({ pensum, filtros, onFiltrosChange, perfil, onPerfilChange }: FilterPanelProps) {
+export const FilterPanel = memo(function FilterPanel({ pensum, filtros, onFiltrosChange, perfil, onPerfilChange }: FilterPanelProps) {
   const [evitarInput, setEvitarInput] = useState('')
   const [sisiInput, setSisiInput] = useState('')
 
@@ -179,4 +179,4 @@ export function FilterPanel({ pensum, filtros, onFiltrosChange, perfil, onPerfil
       </div>
     </div>
   )
-}
+})

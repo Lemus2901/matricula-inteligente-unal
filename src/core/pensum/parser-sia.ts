@@ -20,6 +20,16 @@ import type {
 const COURSE_RE = /^(.*?)\s*\((\d{7}(?:-M)?)\)\s*(.*)$/
 const ESTADOS = ['APROBADA', 'REPROBADA', 'CURSANDO', 'CANCELADA']
 
+// Regex izadas a nivel de módulo (se reutilizan en cada línea/llamada;
+// crear RegExp dentro de loops es trabajo repetido innecesario).
+const RE_SALTO_LINEA = /\r/g
+const RE_ESPACIOS = /\s+/g
+const RE_SEPARADOR_CAMPOS = /\t|\s{2,}/
+const RE_DOS_O_MAS_ESPACIOS = /\s{2,}/
+const RE_DIACRITICOS = /[\u0300-\u036f]/g
+const RE_PUNTO = /\./g
+const RE_ENTERO = /^\d+$/
+
 function normalizarEstado(raw: string): HistorialItem['estado'] | null {
   const r = raw.trim().toUpperCase()
   if (r.includes('APROBAD')) return 'aprobada'
@@ -46,7 +56,7 @@ export function tipologiaAComponente(tipo: string): ComponenteId | null {
 }
 
 export function parsearHistorialSIA(texto: string): ParseResult {
-  const lineas = texto.replace(/\r/g, '').split('\n')
+  const lineas = texto.replace(RE_SALTO_LINEA, '').split('\n')
   const items: HistorialItem[] = []
   const errores: ParseError[] = []
   const warnings: string[] = []
@@ -65,7 +75,7 @@ export function parsearHistorialSIA(texto: string): ParseResult {
 
     if (match) {
       const [, nombreRaw, codigo, resto] = match
-      const nombre = nombreRaw.replace(/\s+/g, ' ').trim()
+      const nombre = nombreRaw.replace(RE_ESPACIOS, ' ').trim()
 
       // Si el nombre está vacío, no es una asignatura.
       if (!nombre) {
@@ -73,7 +83,7 @@ export function parsearHistorialSIA(texto: string): ParseResult {
         continue
       }
 
-      const campos = resto.split(/\t|\s{2,}/).filter((c) => c.trim().length > 0)
+      const campos = resto.split(RE_SEPARADOR_CAMPOS).filter((c) => c.trim().length > 0)
       const creditos = Number(campos[0])
       const tipo = campos[1] ?? ''
       const periodo = campos[2] ?? ''
@@ -127,7 +137,7 @@ export function parsearHistorialSIA(texto: string): ParseResult {
 function normalizarTexto(s: string): string {
   return s
     .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
+    .replace(RE_DIACRITICOS, '')
     .toLowerCase()
     .trim()
 }
@@ -155,14 +165,14 @@ function extraerResumenCreditos(lineas: string[], desde: number): FilaResumenSIA
     // O tolerancia: tabs (formato real) o dos o más espacios.
     let celdas = lineas[i].split('\t').map((c) => c.trim())
     if (celdas.length < 6) {
-      celdas = lineas[i].split(/\s{2,}/).map((c) => c.trim())
+      celdas = lineas[i].split(RE_DOS_O_MAS_ESPACIOS).map((c) => c.trim())
     }
     celdas = celdas.filter((c) => c.length > 0)
     if (celdas.length < 6) continue
 
     const [tipologia, ...resto] = celdas
-    const numeros = resto.slice(0, 5).map((c) => c.replace(/\./g, ''))
-    if (!/^\d+$/.test(tipologia) && numeros.every((n) => /^\d+$/.test(n))) {
+    const numeros = resto.slice(0, 5).map((c) => c.replace(RE_PUNTO, ''))
+    if (!RE_ENTERO.test(tipologia) && numeros.every((n) => RE_ENTERO.test(n))) {
       filas.push({
         tipologia,
         exigidos: Number(numeros[0]),

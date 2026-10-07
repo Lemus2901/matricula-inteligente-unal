@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { CheckCircle } from 'lucide-react'
 import { GRUPOS_SIA } from '../core/algorithm/cupos'
 import type { AvanceComponente, FilaResumenSIA } from '../core/pensum/types'
@@ -55,7 +56,7 @@ function FilaAvance({ c }: { c: AvanceComponente }) {
  *   nombre del pensum como sub-fila. Es el cálculo que usa el motor para
  *   decidir los cupos de las recomendaciones.
  */
-export function ProgressPanel({ avance, resumenSia }: ProgressPanelProps) {
+export const ProgressPanel = memo(function ProgressPanel({ avance, resumenSia }: ProgressPanelProps) {
   if (avance.length === 0 && resumenSia.length === 0) return null
 
   return (
@@ -157,4 +158,4 @@ export function ProgressPanel({ avance, resumenSia }: ProgressPanelProps) {
       )}
     </section>
   )
-}
+})

@@ -1,11 +1,11 @@
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import type { CuelloBotella } from '../core/pensum/types'
 
 interface BottleneckAlertProps {
   cuellos: CuelloBotella[]
 }
 
-export function BottleneckAlert({ cuellos }: BottleneckAlertProps) {
+export const BottleneckAlert = memo(function BottleneckAlert({ cuellos }: BottleneckAlertProps) {
   const [expandido, setExpandido] = useState(false)
 
   if (!cuellos.length) return null
@@ -52,4 +52,4 @@ export function BottleneckAlert({ cuellos }: BottleneckAlertProps) {
       )}
     </div>
   )
-}
+})

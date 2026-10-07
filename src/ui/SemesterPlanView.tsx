@@ -1,12 +1,12 @@
 import { ChevronDown, FileText, X } from 'lucide-react'
-import { useState } from 'react'
+import { memo, useState } from 'react'
 
 interface SemesterPlanViewProps {
   ruta: any
   onClose: () => void
 }
 
-export function SemesterPlanView({ ruta, onClose }: SemesterPlanViewProps) {
+export const SemesterPlanView = memo(function SemesterPlanView({ ruta, onClose }: SemesterPlanViewProps) {
   const [expandido, setExpandido] = useState<Record<number, boolean>>({})
 
   if (!ruta || !ruta.semestres.length) {
@@ -144,4 +144,4 @@ export function SemesterPlanView({ ruta, onClose }: SemesterPlanViewProps) {
       </div>
     </div>
   )
-}
+})
