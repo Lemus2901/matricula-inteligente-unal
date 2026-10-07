@@ -1101,6 +1101,7 @@ La interfaz es un **recomendador por filtros**, no un visor de grafos. El estudi
 - Inmediato: el recálculo es instantáneo.
 - No bloqueante: las advertencias y conflictos informan, no impiden.
 - Móvil primero (RNF-08).
+- **Rendimiento y React (v0.1 – auditoría Vercel React Best Practices)**: evitar trabajo innecesario en render; JSX estático izado (`LOGO_HEADER`, `VACIO`, `noop`); estado derivado sin useState/useEffect (p.ej. `ConflictToast`); `useMemo` para cálculos costosos (`asignaturas`, `historialMap`, `pensums`, Sets de filtros/evitar/si-o-sí); `useCallback` para callbacks estables de hijos memoizados; `React.memo` en componentes puros (`NextCoursesList`, `ProgressPanel`, `HistoryEditor`, `FilterPanel`, `BottleneckAlert`, `SemesterPlanView`, `PensumSelector`); reglas de derivación y hooks de Vercel aplícanse con excepciones justificadas (SPA 100% client-side, datos pequeños ≤70 materias, listas pequeñas sin virtualizar, componentes memoizados con props estables en su mayoría).
 
 ---
 
@@ -1235,7 +1236,8 @@ La interfaz es un **recomendador por filtros**, no un visor de grafos. El estudi
 8. **Cupos por componente**: `cupos.ts`, filtrado de recomendaciones, orden obligatorias-primero, cuellos acotados a materias necesarias, `ProgressPanel`, fixture real (`historial-sia-real.ts`) — corrección tras validar con historial real.
 9. **Resumen de créditos (SIA)**: extracción del bloque en el parser (dos variantes de encabezado), campo opcional `resumen_sia` en localStorage y tabla en `ProgressPanel` sobre el avance calculado.
 10. **UI de tipologías SIA**: `GRUPOS_SIA` (el cálculo se agrupa bajo los encabezados y el orden del SIA, con subtotales de exigidos del pensum), nota de Nivelación y `nombre_sia` real en la vista previa.
-11. **Deploy** en GitHub Pages + README + caso de estudio.
+11. **Auditoría de rendimiento React (Vercel Best Practices)**: memoización (`React.memo`, `useMemo`, `useCallback`), JSX estático izado, estado derivado sin efectos, regex y mapas izados a nivel de módulo, Sets para búsquedas O(1), justificación de reglas omitidas (async/server, virtualización, etc.) y actualización de esta especificación.
+12. **Deploy** en GitHub Pages + README + caso de estudio.
 
 ---
 
